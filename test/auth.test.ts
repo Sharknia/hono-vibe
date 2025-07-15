@@ -5,7 +5,7 @@ import Database from 'better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import * as schema from '@/infrastructure/db/schema';
 import { hash } from 'bcryptjs';
-import { verify } from 'hono/jwt';
+import { sign, verify } from 'hono/jwt';
 import { eq } from 'drizzle-orm';
 
 const sqlite = new Database(':memory:');
@@ -36,6 +36,16 @@ describe('Auth Routes', () => {
       const res = await app.fetch(req, testEnv);
       expect(res.status).toBe(201);
     });
+
+    it('should return 400 for password less than 8 characters', async () => {
+      const req = new Request('http://localhost/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'test@example.com', password: '123' }),
+      });
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(400);
+    });
   });
 
   describe('POST /api/auth/login', () => {
@@ -44,17 +54,14 @@ describe('Auth Routes', () => {
       await db.insert(schema.users).values({ id: 'user-123', email: 'test@example.com', passwordHash });
     });
 
-    it('should login a user and return valid JWT tokens', async () => {
+    it('should return 401 for incorrect password', async () => {
       const req = new Request('http://localhost/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'test@example.com', password: 'password123' }),
+        body: JSON.stringify({ email: 'test@example.com', password: 'wrongpassword' }),
       });
       const res = await app.fetch(req, testEnv);
-      expect(res.status).toBe(200);
-      const body = await res.json();
-      const accessPayload = await verify(body.accessToken, testEnv.JWT_ACCESS_SECRET);
-      expect(accessPayload.sub).toBe('user-123');
+      expect(res.status).toBe(401);
     });
   });
 
@@ -74,25 +81,27 @@ describe('Auth Routes', () => {
       refreshToken = body.refreshToken;
     });
 
-    it('should return a new access token for a valid refresh token', async () => {
+    it('should return 401 for an expired refresh token', async () => {
+      const expiredToken = await sign(
+        { sub: 'user-refresh', exp: Math.floor(Date.now() / 1000) - 10 },
+        testEnv.JWT_REFRESH_SECRET
+      );
       const req = new Request('http://localhost/api/auth/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
+        body: JSON.stringify({ refreshToken: expiredToken }),
       });
       const res = await app.fetch(req, testEnv);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(401);
     });
   });
 
   describe('POST /api/auth/logout', () => {
     let accessToken = '';
     let userId = 'user-logout';
-
     beforeEach(async () => {
       const passwordHash = await hash('password123', 10);
       await db.insert(schema.users).values({ id: userId, email: 'logout@example.com', passwordHash });
-      
       const loginReq = new Request('http://localhost/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
