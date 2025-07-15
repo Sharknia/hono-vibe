@@ -1,9 +1,7 @@
-import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
+import { Hono } from 'hono';
 import { authMiddleware } from '@/presentation/middlewares/auth.middleware';
 import { IUserRepository } from '@/domain/users/user.repository';
 import { AuthPayload } from '@/presentation/middlewares/auth.middleware';
-import { UserProfileSchema } from '@/presentation/schemas/user.schema';
-import { ErrorSchema } from '@/presentation/schemas/common.schema';
 import { NotFoundError } from '@/domain/errors';
 
 type AppEnv = {
@@ -13,36 +11,12 @@ type AppEnv = {
   }
 }
 
-const userRoutes = new OpenAPIHono<AppEnv>();
+const userRoutes = new Hono<AppEnv>();
 
 // Protect all user routes with the auth middleware
 userRoutes.use('/*', authMiddleware);
 
-const getMyProfileRoute = createRoute({
-  method: 'get',
-  path: '/me',
-  security: [{ BearerAuth: [] }], // This references a security scheme we'll define globally
-  responses: {
-    200: {
-      description: 'User profile data',
-      content: {
-        'application/json': {
-          schema: UserProfileSchema,
-        },
-      },
-    },
-    401: {
-      description: 'Unauthorized',
-      content: { 'application/json': { schema: ErrorSchema } },
-    },
-    404: {
-      description: 'User not found',
-      content: { 'application/json': { schema: ErrorSchema } },
-    },
-  },
-});
-
-userRoutes.openapi(getMyProfileRoute, async (c) => {
+userRoutes.get('/me', async (c) => {
   const { userId } = c.get('authPayload');
   const repo = c.get('userRepository');
   

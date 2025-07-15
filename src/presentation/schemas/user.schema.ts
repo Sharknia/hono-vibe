@@ -13,4 +13,7 @@ export const UserProfileSchema = z.object({
   role: z.enum(['USER', 'ADMIN']).openapi({
     example: 'USER',
   }),
+}).openapi({
+    type: 'object',
+    title: 'UserProfile',
 });

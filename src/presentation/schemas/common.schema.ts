@@ -9,4 +9,8 @@ export const ErrorSchema = z.object({
     example: 'Not Found',
     description: 'Error message',
   }),
+}).openapi({
+    type: 'object',
+    title: 'ErrorResponse',
+    description: 'Standard error response',
 });
