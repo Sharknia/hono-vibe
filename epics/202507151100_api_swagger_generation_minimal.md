@@ -15,9 +15,9 @@
 
 #### **Task 3: OpenAPI 라우트 래핑(Wrapping) 및 문서화**
 
-- [ ] 기존 라우트 로직을 **변경하지 않고**, `createRoute`를 사용하여 각 라우트를 감싸고(wrap) 스키마를 연결하여 문서 정보를 추가합니다.
-- [ ] `auth.routes.ts`의 `/register`, `/login` 라우트 래핑
-- [ ] `user.routes.ts`의 `/me` 라우트 래핑
+- [x] 기존 라우트 로직을 **변경하지 않고**, `createRoute`를 사용하여 각 라우트를 감싸고(wrap) 스키마를 연결하여 문서 정보를 추가합니다.
+- [x] `auth.routes.ts`의 `/register`, `/login` 라우트 래핑
+- [x] `user.routes.ts`의 `/me` 라우트 래핑
 
 #### **Task 4: Swagger UI 엔드포인트 추가**
 
