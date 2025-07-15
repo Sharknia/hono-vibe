@@ -16,14 +16,14 @@ type AppEnv = {
 const userRoutes = new Hono<AppEnv>();
 
 // --- Public Routes ---
-userRoutes.get('/check-nickname/:nickname', zValidator('param', CheckNicknameSchema), async (c) => {
+userRoutes.get('/check/nickname/:nickname', zValidator('param', CheckNicknameSchema), async (c) => {
   const { nickname } = c.req.valid('param');
   const repo = c.get('userRepository');
   const user = await repo.findByNickname(nickname);
   return c.json({ isAvailable: !user });
 });
 
-userRoutes.get('/check-email/:email', zValidator('param', CheckEmailSchema), async (c) => {
+userRoutes.get('/check/email/:email', zValidator('param', CheckEmailSchema), async (c) => {
   const { email } = c.req.valid('param');
   const repo = c.get('userRepository');
   const user = await repo.findByEmail(email);
