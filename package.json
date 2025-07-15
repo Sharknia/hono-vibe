@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@hono/swagger-ui": "^0.5.2",
     "@hono/zod-validator": "^0.7.1",
     "bcryptjs": "^3.0.2",
     "drizzle-orm": "^0.44.3",
@@ -25,7 +26,6 @@
     "better-sqlite3": "^12.2.0",
     "drizzle-kit": "^0.31.4",
     "typescript": "^5.8.3",
-    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4",
     "wrangler": "^4.24.3"
   }

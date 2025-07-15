@@ -39,4 +39,9 @@ export class User {
   public static fromData(data: UserProps): User {
     return new User(data);
   }
+
+  public toProfile() {
+    const { passwordHash, refreshToken, createdAt, updatedAt, ...profile } = this.props;
+    return profile;
+  }
 }

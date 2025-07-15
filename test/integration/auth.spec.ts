@@ -1,5 +1,5 @@
 import { app } from '@/index';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach } from 'vitest';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -19,7 +19,7 @@ describe('Auth Flow Integration Test', () => {
     migrate(db, { migrationsFolder: './drizzle' });
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await db.delete(schema.users);
   });
 

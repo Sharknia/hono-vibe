@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { authMiddleware } from '@/presentation/middlewares/auth.middleware';
 import { IUserRepository } from '@/domain/users/user.repository';
 import { AuthPayload } from '@/presentation/middlewares/auth.middleware';
+import { NotFoundError } from '@/domain/errors';
 
 type AppEnv = {
   Variables: {
@@ -22,12 +23,11 @@ userRoutes.get('/me', async (c) => {
   const user = await repo.findById(userId);
 
   if (!user) {
-    return c.json({ message: 'User not found' }, 404);
+    // This case is unlikely if auth middleware is effective, but it's a good safeguard.
+    throw new NotFoundError('User not found');
   }
 
-  const { passwordHash, refreshToken, ...userProfile } = user.props;
-
-  return c.json(userProfile);
+  return c.json(user.toProfile());
 });
 
 export default userRoutes;
