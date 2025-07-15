@@ -3,9 +3,10 @@ import authRoutes from '@/presentation/routes/auth.routes';
 import userRoutes from '@/presentation/routes/user.routes';
 import { dependencyInjection } from '@/presentation/middlewares/di.middleware';
 import { AuthService } from '@/application/services/auth.service';
-import { AuthPayload } from '@/presentation/middlewares/auth.middleware';
+import { AuthPayload, authMiddleware } from '@/presentation/middlewares/auth.middleware';
 import { IUserRepository } from '@/domain/users/user.repository';
 import { errorHandler } from './presentation/middlewares/error.middleware';
+import { roleMiddleware } from './presentation/middlewares/role.middleware';
 
 // Define the types for the context variables
 type AppEnv = {
@@ -30,6 +31,14 @@ app.get('/health', (c) => {
 const api = app.basePath('/api');
 api.route('/auth', authRoutes);
 api.route('/users', userRoutes);
+
+// Admin Route Example
+api.get(
+  '/admin',
+  authMiddleware,
+  roleMiddleware('ADMIN'),
+  (c) => c.json({ message: 'Welcome, Admin!' })
+);
 
 // Register the global error handler
 app.onError(errorHandler);
