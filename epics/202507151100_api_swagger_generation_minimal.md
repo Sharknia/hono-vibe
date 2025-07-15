@@ -8,10 +8,10 @@
 
 #### **Task 2: 문서화를 위한 Zod 스키마 정의**
 
-- [ ] 기존 API의 요청/응답 구조와 **동일한** Zod 스키마를 `src/presentation/schemas` 디렉토리에 생성합니다. **(기존 로직, 엔티티, 서비스 변경 절대 없음)**
-    - [ ] 공통 에러 응답 스키마
-    - [ ] 인증(Auth) API 스키마 (`/register`, `/login`)
-    - [ ] 사용자(User) API 스키마 (`/me`)
+- [x] 기존 API의 요청/응답 구조와 **동일한** Zod 스키마를 `src/presentation/schemas` 디렉토리에 생성합니다. **(기존 로직, 엔티티, 서비스 변경 절대 없음)**
+    - [x] 공통 에러 응답 스키마
+    - [x] 인증(Auth) API 스키마 (`/register`, `/login`)
+    - [x] 사용자(User) API 스키마 (`/me`)
 
 #### **Task 3: OpenAPI 라우트 래핑(Wrapping) 및 문서화**
 
