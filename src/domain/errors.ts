@@ -30,3 +30,15 @@ export class ConflictError extends HttpError {
     super(409, message);
   }
 }
+
+export class DuplicateEmailError extends ConflictError {
+  constructor(message = 'Email already in use') {
+    super(message);
+  }
+}
+
+export class DuplicateNicknameError extends ConflictError {
+  constructor(message = 'Nickname already in use') {
+    super(message);
+  }
+}

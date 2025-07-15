@@ -3,6 +3,7 @@ import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 import { AuthService } from '@/application/services/auth.service';
 import { authMiddleware, AuthPayload } from '@/presentation/middlewares/auth.middleware';
+import { RegisterRequestSchema } from '../schemas/auth.schema';
 
 type AppEnv = {
   Variables: {
@@ -12,11 +13,6 @@ type AppEnv = {
 };
 
 const authRoutes = new Hono<AppEnv>();
-
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8, 'Password must be at least 8 characters long'),
-});
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -28,10 +24,10 @@ const refreshSchema = z.object({
 });
 
 // Public routes
-authRoutes.post('/register', zValidator('json', registerSchema), async (c) => {
+authRoutes.post('/register', zValidator('json', RegisterRequestSchema), async (c) => {
   const authService = c.var.authService;
-  const { email, password } = c.req.valid('json');
-  await authService.register({ email, password });
+  const { email, password, nickname } = c.req.valid('json');
+  await authService.signUp({ email, password, nickname });
   return c.json({ message: 'User created successfully' }, 201);
 });
 

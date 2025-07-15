@@ -27,6 +27,7 @@ describe('Auth Flow Integration Test', () => {
     const userCredentials = {
       email: 'integration-test@example.com',
       password: 'StrongPassword123',
+      nickname: 'integ-test',
     };
 
     // 1. Register a new user
@@ -42,7 +43,7 @@ describe('Auth Flow Integration Test', () => {
     const loginReq = new Request('http://localhost/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userCredentials),
+      body: JSON.stringify({ email: userCredentials.email, password: userCredentials.password }),
     });
     const loginRes = await app.fetch(loginReq, testEnv);
     expect(loginRes.status).toBe(200);
@@ -58,6 +59,7 @@ describe('Auth Flow Integration Test', () => {
     const profileBody = await profileRes.json();
     
     expect(profileBody.email).toBe(userCredentials.email);
+    expect(profileBody.nickname).toBe(userCredentials.nickname);
     expect(profileBody).not.toHaveProperty('passwordHash');
   });
 });

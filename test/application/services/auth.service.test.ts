@@ -2,11 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthService } from '@/application/services/auth.service';
 import { IUserRepository } from '@/domain/users/user.repository';
 import { User } from '@/domain/users/user.entity';
-import { ConflictError, UnauthorizedError, NotFoundError } from '@/domain/errors';
+import {
+  DuplicateEmailError,
+  DuplicateNicknameError,
+  UnauthorizedError,
+  NotFoundError,
+} from '@/domain/errors';
 
 // Mock UserRepository
 const mockUserRepository: IUserRepository = {
   findByEmail: vi.fn(),
+  findByNickname: vi.fn(),
   findById: vi.fn(),
   save: vi.fn(),
   update: vi.fn(),
@@ -24,15 +30,42 @@ describe('AuthService', () => {
     authService = new AuthService(mockUserRepository, ACCESS_SECRET, REFRESH_SECRET);
   });
 
-  describe('register', () => {
-    it('should throw ConflictError if email is already in use', async () => {
+  describe('signUp', () => {
+    it('should create a new user successfully', async () => {
       // Arrange
-      const existingUser = await User.create({ email: 'test@example.com', password_plain: 'password123', nickname: null });
+      vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(null);
+      vi.mocked(mockUserRepository.findByNickname).mockResolvedValue(null);
+      const dto = { email: 'new@example.com', password: 'password123', nickname: 'newuser' };
+
+      // Act
+      await authService.signUp(dto);
+
+      // Assert
+      expect(mockUserRepository.save).toHaveBeenCalledOnce();
+      const savedUser = vi.mocked(mockUserRepository.save).mock.calls[0][0];
+      expect(savedUser.props.email).toBe(dto.email);
+      expect(savedUser.props.nickname).toBe(dto.nickname);
+    });
+
+    it('should throw DuplicateEmailError if email is already in use', async () => {
+      // Arrange
+      const existingUser = await User.create({ email: 'test@example.com', password_plain: 'password123', nickname: 'testuser' });
       vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(existingUser);
+      const dto = { email: 'test@example.com', password: 'password123', nickname: 'newuser' };
 
       // Act & Assert
-      await expect(authService.register({ email: 'test@example.com', password: 'password123' }))
-        .rejects.toThrow('Email already in use');
+      await expect(authService.signUp(dto)).rejects.toThrow(new DuplicateEmailError());
+    });
+
+    it('should throw DuplicateNicknameError if nickname is already in use', async () => {
+      // Arrange
+      const existingUser = await User.create({ email: 'other@example.com', password_plain: 'password123', nickname: 'testuser' });
+      vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(null);
+      vi.mocked(mockUserRepository.findByNickname).mockResolvedValue(existingUser);
+      const dto = { email: 'new@example.com', password: 'password123', nickname: 'testuser' };
+
+      // Act & Assert
+      await expect(authService.signUp(dto)).rejects.toThrow(new DuplicateNicknameError());
     });
   });
 
@@ -48,7 +81,7 @@ describe('AuthService', () => {
 
     it('should throw UnauthorizedError for invalid password', async () => {
       // Arrange
-      const user = await User.create({ email: 'test@example.com', password_plain: 'correct-password', nickname: null });
+      const user = await User.create({ email: 'test@example.com', password_plain: 'correct-password', nickname: 'testuser' });
       vi.mocked(mockUserRepository.findByEmail).mockResolvedValue(user);
 
       // Act & Assert
@@ -60,7 +93,7 @@ describe('AuthService', () => {
   describe('refresh', () => {
     it('should throw UnauthorizedError for an invalid or revoked token', async () => {
         // Arrange
-        const user = await User.create({ email: 'test@example.com', password_plain: 'password123', nickname: null });
+        const user = await User.create({ email: 'test@example.com', password_plain: 'password123', nickname: 'testuser' });
         user.props.refreshToken = 'valid-token';
         vi.mocked(mockUserRepository.findById).mockResolvedValue(user);
   

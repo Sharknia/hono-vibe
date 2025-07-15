@@ -22,6 +22,14 @@ export class DrizzleUserRepository implements IUserRepository {
     return User.fromData(result as UserProps);
   }
 
+  async findByNickname(nickname: string): Promise<User | null> {
+    const result = await this.db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.nickname, nickname),
+    });
+    if (!result) return null;
+    return User.fromData(result as UserProps);
+  }
+
   async findById(id: string): Promise<User | null> {
     const result = await this.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, id),
