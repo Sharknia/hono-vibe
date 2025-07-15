@@ -1,6 +1,7 @@
-import { Hono } from 'hono';
+import { OpenAPIHono } from '@hono/zod-openapi';
 import authRoutes from '@/presentation/routes/auth.routes';
 import userRoutes from '@/presentation/routes/user.routes';
+import docRoutes from '@/presentation/routes/doc.routes';
 import { dependencyInjection } from '@/presentation/middlewares/di.middleware';
 import { AuthService } from '@/application/services/auth.service';
 import { AuthPayload, authMiddleware } from '@/presentation/middlewares/auth.middleware';
@@ -17,7 +18,7 @@ type AppEnv = {
   };
 };
 
-const app = new Hono<AppEnv>();
+const app = new OpenAPIHono<AppEnv>();
 
 // Apply dependency injection middleware to API routes
 app.use('/api/*', dependencyInjection);
@@ -31,6 +32,7 @@ app.get('/health', (c) => {
 const api = app.basePath('/api');
 api.route('/auth', authRoutes);
 api.route('/users', userRoutes);
+api.route('/', docRoutes); // Serve Swagger UI at /api/doc
 
 // Admin Route Example
 api.get(
@@ -39,6 +41,28 @@ api.get(
   roleMiddleware('ADMIN'),
   (c) => c.json({ message: 'Welcome, Admin!' })
 );
+
+// --- OpenAPI Specification ---
+app.doc('/api/openapi.json', {
+  openapi: '3.0.0',
+  info: {
+    version: '1.0.0',
+    title: 'Hono Vibe API',
+    description: 'API documentation for the Hono Vibe application.',
+  },
+  servers: [{ url: 'http://localhost:8787', description: 'Local server' }],
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Bearer token authentication',
+      },
+    },
+  },
+});
+
 
 // Register the global error handler
 app.onError(errorHandler);

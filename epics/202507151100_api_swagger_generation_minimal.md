@@ -21,11 +21,11 @@
 
 #### **Task 4: Swagger UI 엔드포인트 추가**
 
-- [ ] `/api/doc` 경로에서 Swagger UI를 제공하는 `doc.routes.ts` 파일을 생성합니다.
-- [ ] `src/index.ts`에 OpenAPI 라우트와 Swagger UI 라우트를 등록합니다.
+- [x] `/api/doc` 경로에서 Swagger UI를 제공하는 `doc.routes.ts` 파일을 생성합니다.
+- [x] `src/index.ts`에 OpenAPI 라우트와 Swagger UI 라우트를 등록합니다.
 
 #### **Task 5: 테스트 및 최종 확인**
 
-- [ ] (TDD) Swagger UI 라우트(`/api/doc`)가 200 OK를 반환하는 테스트 코드 작성
-- [ ] `npm test`로 모든 기존 테스트가 깨지지 않고 통과하는지 확인
+- [x] (TDD) Swagger UI 라우트(`/api/doc`)가 200 OK를 반환하는지 확인하는 테스트 코드 작성
+- [x] `npm test`로 모든 기존 테스트가 깨지지 않고 통과하는지 확인
 - [ ] (사용자 확인) `wrangler dev` 실행 후 `/api/doc`에서 문서 확인
