@@ -1,6 +1,7 @@
 import { IUserRepository } from '@/domain/users/user.repository';
 import { User } from '@/domain/users/user.entity';
 import { sign, verify } from 'hono/jwt';
+import { ConflictError, NotFoundError, UnauthorizedError } from '@/domain/errors';
 
 type RegisterUserDto = {
   email: string;
@@ -12,13 +13,6 @@ type LoginUserDto = {
   password: string;
 };
 
-type ServiceResponse = {
-  success: boolean;
-  data?: any;
-  message: string;
-  statusCode: number;
-}
-
 export class AuthService {
   constructor(
     private userRepository: IUserRepository,
@@ -26,35 +20,29 @@ export class AuthService {
     private readonly refreshSecret: string,
   ) {}
 
-  async register(dto: RegisterUserDto): Promise<ServiceResponse> {
+  async register(dto: RegisterUserDto): Promise<void> {
     const existingUser = await this.userRepository.findByEmail(dto.email);
     if (existingUser) {
-      return { success: false, message: 'Email already in use', statusCode: 409 };
+      throw new ConflictError('Email already in use');
     }
 
-    try {
-      const newUser = await User.create({
-        email: dto.email,
-        password_plain: dto.password,
-        nickname: null,
-      });
-      await this.userRepository.save(newUser);
-      return { success: true, message: 'User created successfully', statusCode: 201 };
-    } catch (error) {
-      console.error(error);
-      return { success: false, message: 'Failed to create user', statusCode: 500 };
-    }
+    const newUser = await User.create({
+      email: dto.email,
+      password_plain: dto.password,
+      nickname: null,
+    });
+    await this.userRepository.save(newUser);
   }
 
-  async login(dto: LoginUserDto): Promise<ServiceResponse> {
+  async login(dto: LoginUserDto): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.userRepository.findByEmail(dto.email);
     if (!user) {
-      return { success: false, message: 'User not found', statusCode: 404 };
+      throw new NotFoundError('User not found');
     }
 
     const isPasswordValid = await user.comparePassword(dto.password);
     if (!isPasswordValid) {
-      return { success: false, message: 'Invalid credentials', statusCode: 401 };
+      throw new UnauthorizedError('Invalid credentials');
     }
     
     const accessToken = await sign({
@@ -71,24 +59,19 @@ export class AuthService {
     user.props.refreshToken = refreshToken;
     await this.userRepository.update(user);
 
-    return { 
-      success: true, 
-      data: { accessToken, refreshToken },
-      message: 'Login successful', 
-      statusCode: 200 
-    };
+    return { accessToken, refreshToken };
   }
 
-  async refresh(token: string): Promise<ServiceResponse> {
+  async refresh(token: string): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const payload = await verify(token, this.refreshSecret);
       if (!payload || !payload.sub) {
-        return { success: false, message: 'Invalid refresh token', statusCode: 401 };
+        throw new UnauthorizedError('Invalid refresh token');
       }
 
       const user = await this.userRepository.findById(payload.sub);
       if (!user || user.props.refreshToken !== token) {
-        return { success: false, message: 'Invalid or revoked refresh token', statusCode: 401 };
+        throw new UnauthorizedError('Invalid or revoked refresh token');
       }
 
       const newAccessToken = await sign({
@@ -105,27 +88,23 @@ export class AuthService {
       user.props.refreshToken = newRefreshToken;
       await this.userRepository.update(user);
 
-      return { 
-        success: true, 
-        data: { accessToken: newAccessToken, refreshToken: newRefreshToken },
-        message: 'Tokens refreshed successfully', 
-        statusCode: 200 
-      };
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 
     } catch (error) {
-      return { success: false, message: 'Invalid or expired refresh token', statusCode: 401 };
+      if (error instanceof UnauthorizedError) throw error;
+      // Re-throw JWT errors (like expiration) as a standard UnauthorizedError
+      throw new UnauthorizedError('Invalid or expired refresh token');
     }
   }
 
-  async logout(userId: string): Promise<ServiceResponse> {
+  async logout(userId: string): Promise<void> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      return { success: false, message: 'User not found', statusCode: 404 };
+      // This case is unlikely if the auth middleware is working, but good practice.
+      throw new NotFoundError('User not found');
     }
 
     user.props.refreshToken = null;
     await this.userRepository.update(user);
-
-    return { success: true, message: 'Logout successful', statusCode: 200 };
   }
 }

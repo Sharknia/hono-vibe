@@ -76,10 +76,10 @@
     - [x] Sub-task 1.3: 커스텀 에러를 처리하는 Hono 에러 핸들러 미들웨어 구현 (`src/presentation/middlewares/error.middleware.ts`)
     - [x] Sub-task 1.4: 에러 핸들러를 최상위 앱에 적용 (`src/index.ts`)
     - [x] Sub-task 1.5: 테스트 통과 확인 및 커밋/푸시
-- [ ] **Task 2: `AuthService` 리팩토링**
-    - [ ] Sub-task 2.1: `AuthService`가 커스텀 에러를 던지도록 테스트 코드 수정
-    - [ ] Sub-task 2.2: `AuthService`가 `ServiceResponse` 대신 성공 시 데이터, 실패 시 커스텀 에러를 던지도록 수정
-    - [ ] Sub-task 2.3: 테스트 통과 확인 및 커밋/푸시
+- [x] **Task 2: `AuthService` 리팩토링**
+    - [x] Sub-task 2.1: `AuthService`가 커스텀 에러를 던지도록 테스트 코드 수정
+    - [x] Sub-task 2.2: `AuthService`가 `ServiceResponse` 대신 성공 시 데이터, 실패 시 커스텀 에러를 던지도록 수정
+    - [x] Sub-task 2.3: 테스트 통과 확인 및 커밋/푸시
 - [ ] **Task 3: `auth.routes.ts` 리팩토링**
     - [ ] Sub-task 3.1: 에러 핸들러 미들웨어 적용에 맞춰 통합 테스트 코드 수정
     - [ ] Sub-task 3.2: `auth.routes.ts`에서 `ServiceResponse` 분기 처리 로직 ��거
