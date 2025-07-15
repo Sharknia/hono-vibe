@@ -76,6 +76,29 @@ app.get('/api/openapi.json', (c) => {
     },
     servers: [{ url: serverUrl, description: serverDescription }],
     paths: {
+      '/health': {
+        get: {
+          tags: ['health'],
+          summary: 'Health check',
+          description: 'Checks if the service is running.',
+          responses: {
+            '200': {
+              description: 'Service is healthy',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      status: { type: 'string', example: 'ok' },
+                      message: { type: 'string', example: 'Health check successful' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       '/api/auth/register': {
         post: {
           tags: ['auth'],
@@ -90,8 +113,9 @@ app.get('/api/openapi.json', (c) => {
                   properties: {
                     email: { type: 'string', format: 'email', example: 'test@example.com' },
                     password: { type: 'string', minLength: 8, example: 'password123' },
+                    nickname: { type: 'string', minLength: 2, maxLength: 20, example: 'testuser' },
                   },
-                  required: ['email', 'password'],
+                  required: ['email', 'password', 'nickname'],
                 },
               },
             },
@@ -154,33 +178,6 @@ app.get('/api/openapi.json', (c) => {
           },
         },
       },
-      '/api/users/me': {
-        get: {
-          tags: ['users'],
-          summary: 'Get my profile',
-          description: 'Retrieves the profile of the currently authenticated user.',
-          security: [{ BearerAuth: [] }],
-          responses: {
-            '200': {
-              description: 'User profile data',
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      id: { type: 'string', format: 'uuid' },
-                      email: { type: 'string', format: 'email' },
-                      nickname: { type: 'string', nullable: true },
-                      role: { type: 'string', enum: ['USER', 'ADMIN'] },
-                    },
-                  },
-                },
-              },
-            },
-            '401': { description: 'Unauthorized' },
-          },
-        },
-      },
       '/api/auth/refresh': {
         post: {
           tags: ['auth'],
@@ -227,6 +224,104 @@ app.get('/api/openapi.json', (c) => {
           security: [{ BearerAuth: [] }],
           responses: {
             '204': { description: 'Logout successful' },
+            '401': { description: 'Unauthorized' },
+          },
+        },
+      },
+      '/api/users/check/nickname/{nickname}': {
+        get: {
+          tags: ['users'],
+          summary: 'Check nickname availability',
+          description: 'Checks if a nickname is already taken.',
+          parameters: [
+            {
+              name: 'nickname',
+              in: 'path',
+              required: true,
+              schema: {
+                type: 'string',
+                minLength: 2,
+                maxLength: 20,
+              },
+              description: 'The nickname to check.',
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Availability status',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      isAvailable: { type: 'boolean' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Bad request (validation error)' },
+          },
+        },
+      },
+      '/api/users/check/email/{email}': {
+        get: {
+          tags: ['users'],
+          summary: 'Check email availability',
+          description: 'Checks if an email is already registered.',
+          parameters: [
+            {
+              name: 'email',
+              in: 'path',
+              required: true,
+              schema: {
+                type: 'string',
+                format: 'email',
+              },
+              description: 'The email to check.',
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Availability status',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      isAvailable: { type: 'boolean' },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Bad request (validation error)' },
+          },
+        },
+      },
+      '/api/users/me': {
+        get: {
+          tags: ['users'],
+          summary: 'Get my profile',
+          description: 'Retrieves the profile of the currently authenticated user.',
+          security: [{ BearerAuth: [] }],
+          responses: {
+            '200': {
+              description: 'User profile data',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string', format: 'uuid' },
+                      email: { type: 'string', format: 'email' },
+                      nickname: { type: 'string', nullable: true },
+                      role: { type: 'string', enum: ['USER', 'ADMIN'] },
+                    },
+                  },
+                },
+              },
+            },
             '401': { description: 'Unauthorized' },
           },
         },

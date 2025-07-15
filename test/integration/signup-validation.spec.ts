@@ -31,11 +31,11 @@ describe('Signup Validation Flow Integration Test', () => {
     };
 
     // 1. Check that nickname and email are initially available
-    let res = await app.fetch(new Request(`http://localhost/api/users/check-nickname/${newUser.nickname}`), testEnv);
+    let res = await app.fetch(new Request(`http://localhost/api/users/check/nickname/${newUser.nickname}`), testEnv);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ isAvailable: true });
 
-    res = await app.fetch(new Request(`http://localhost/api/users/check-email/${newUser.email}`), testEnv);
+    res = await app.fetch(new Request(`http://localhost/api/users/check/email/${newUser.email}`), testEnv);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ isAvailable: true });
 
@@ -49,12 +49,12 @@ describe('Signup Validation Flow Integration Test', () => {
     expect(res.status).toBe(201);
 
     // 3. Check that nickname is now taken
-    res = await app.fetch(new Request(`http://localhost/api/users/check-nickname/${newUser.nickname}`), testEnv);
+    res = await app.fetch(new Request(`http://localhost/api/users/check/nickname/${newUser.nickname}`), testEnv);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ isAvailable: false });
 
     // 4. Check that email is now taken
-    res = await app.fetch(new Request(`http://localhost/api/users/check-email/${newUser.email}`), testEnv);
+    res = await app.fetch(new Request(`http://localhost/api/users/check/email/${newUser.email}`), testEnv);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ isAvailable: false });
 
