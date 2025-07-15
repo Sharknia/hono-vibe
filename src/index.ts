@@ -59,6 +59,14 @@ app.get('/health', (c) => {
 app.get('/api/doc', swaggerUI({ url: '/api/openapi.json' }));
 
 app.get('/api/openapi.json', (c) => {
+  const env = c.env.ENV || 'local'; // Default to 'local' if ENV is not set
+  const serverUrl = env === 'prod' 
+    ? 'https://hono-be.furychick0.workers.dev' 
+    : 'http://localhost:8787';
+  const serverDescription = env === 'prod' 
+    ? 'Production Server' 
+    : 'Local Server';
+
   const openApiSpec = {
     openapi: '3.0.0',
     info: {
@@ -66,7 +74,7 @@ app.get('/api/openapi.json', (c) => {
       version: '1.0.0',
       description: 'API documentation for the Hono Vibe application.',
     },
-    servers: [{ url: 'http://localhost:8787', description: 'Local server' }],
+    servers: [{ url: serverUrl, description: serverDescription }],
     paths: {
       '/api/auth/register': {
         post: {

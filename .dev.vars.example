@@ -11,6 +11,5 @@ JWT_REFRESH_SECRET="another-super-secret-and-long-refresh-token-key"
 
 # --- Cloudflare D1 Credentials (for Drizzle Kit) ---
 # These are required to run database migrations with `npx drizzle-kit generate`
-CLOUDFLARE_ACCOUNT_ID="YOUR_CLOUDFLARE_ACCOUNT_ID"
-CLOUDFLARE_DATABASE_ID="YOUR_D1_DATABASE_ID_FROM_WRANGLER_TOML"
-CLOUDFLARE_D1_API_TOKEN="YOUR_CLOUDFLARE_D1_API_TOKEN"
+D1_DATABASE_ID="YOUR_D1_DATABASE_ID_FROM_WRANGLER_TOML"
+env="local"
