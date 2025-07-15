@@ -10,5 +10,5 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB" # This binding will be available in your worker code (e.g., c.env.DB)
 database_name = "hono_db"
-database_id = "${D1_DATABASE_ID}" # <-- REPLACE THIS
+database_id = "4e3216cc-2951-4196-8b30-6d54ecf59bd5" # <-- REPLACE THIS
 migrations_dir = "drizzle"
