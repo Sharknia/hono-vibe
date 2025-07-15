@@ -4,6 +4,8 @@ import userRoutes from '@/presentation/routes/user.routes';
 import { dependencyInjection } from '@/presentation/middlewares/di.middleware';
 import { AuthService } from '@/application/services/auth.service';
 import { AuthPayload } from '@/presentation/middlewares/auth.middleware';
+import { IUserRepository } from '@/domain/users/user.repository';
+import { errorHandler } from './presentation/middlewares/error.middleware';
 
 // Define the types for the context variables
 type AppEnv = {
@@ -29,6 +31,8 @@ const api = app.basePath('/api');
 api.route('/auth', authRoutes);
 api.route('/users', userRoutes);
 
+// Register the global error handler
+app.onError(errorHandler);
 
 export { app };
 
