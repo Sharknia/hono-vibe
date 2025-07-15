@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import authRoutes from '@/presentation/routes/auth.routes';
 import userRoutes from '@/presentation/routes/user.routes';
 import { swaggerUI } from '@hono/swagger-ui';
@@ -22,6 +23,19 @@ const app = new Hono<AppEnv>();
 
 // --- API Routes ---
 const api = new Hono<AppEnv>();
+
+// CORS Middleware
+api.use('/*', cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:8787',
+    'https://hono-be.furychick0.workers.dev',
+    'https://hono-be.tuum.day',
+  ],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Authorization', 'Content-Type'],
+}));
+
 api.use('/*', dependencyInjection);
 api.route('/auth', authRoutes);
 api.route('/users', userRoutes);
