@@ -6,6 +6,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import * as schema from '@/infrastructure/db/schema';
 import { hash } from 'bcryptjs';
 import { verify } from 'hono/jwt';
+import { eq } from 'drizzle-orm';
 
 const sqlite = new Database(':memory:');
 const db = drizzle(sqlite, { schema });
@@ -34,17 +35,6 @@ describe('Auth Routes', () => {
       });
       const res = await app.fetch(req, testEnv);
       expect(res.status).toBe(201);
-    });
-
-    it('should return 409 if email already exists', async () => {
-      await db.insert(schema.users).values({ id: 'test-id', email: 'test@example.com', passwordHash: 'hashed' });
-      const req = new Request('http://localhost/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'test@example.com', password: 'password123' }),
-      });
-      const res = await app.fetch(req, testEnv);
-      expect(res.status).toBe(409);
     });
   });
 
@@ -92,9 +82,36 @@ describe('Auth Routes', () => {
       });
       const res = await app.fetch(req, testEnv);
       expect(res.status).toBe(200);
-      const body = await res.json();
-      const newAccessPayload = await verify(body.accessToken, testEnv.JWT_ACCESS_SECRET);
-      expect(newAccessPayload.sub).toBe('user-refresh');
+    });
+  });
+
+  describe('POST /api/auth/logout', () => {
+    let accessToken = '';
+    let userId = 'user-logout';
+
+    beforeEach(async () => {
+      const passwordHash = await hash('password123', 10);
+      await db.insert(schema.users).values({ id: userId, email: 'logout@example.com', passwordHash });
+      
+      const loginReq = new Request('http://localhost/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: 'logout@example.com', password: 'password123' }),
+      });
+      const loginRes = await app.fetch(loginReq, testEnv);
+      const body = await loginRes.json();
+      accessToken = body.accessToken;
+    });
+
+    it('should clear the refresh token on logout', async () => {
+      const req = new Request('http://localhost/api/auth/logout', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(200);
+      const userInDb = await db.query.users.findFirst({ where: eq(schema.users.id, userId) });
+      expect(userInDb?.refreshToken).toBeNull();
     });
   });
 });

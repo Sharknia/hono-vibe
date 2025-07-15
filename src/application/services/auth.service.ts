@@ -41,6 +41,7 @@ export class AuthService {
       await this.userRepository.save(newUser);
       return { success: true, message: 'User created successfully', statusCode: 201 };
     } catch (error) {
+      console.error(error);
       return { success: false, message: 'Failed to create user', statusCode: 500 };
     }
   }
@@ -114,5 +115,17 @@ export class AuthService {
     } catch (error) {
       return { success: false, message: 'Invalid or expired refresh token', statusCode: 401 };
     }
+  }
+
+  async logout(userId: string): Promise<ServiceResponse> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      return { success: false, message: 'User not found', statusCode: 404 };
+    }
+
+    user.props.refreshToken = null;
+    await this.userRepository.update(user);
+
+    return { success: true, message: 'Logout successful', statusCode: 200 };
   }
 }
