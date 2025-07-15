@@ -159,6 +159,81 @@ app.get('/api/openapi.json', (c) => {
           },
         },
       },
+      '/api/auth/refresh': {
+        post: {
+          tags: ['auth'],
+          summary: 'Refresh token',
+          description: 'Obtains a new access token and refresh token.',
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    refreshToken: { type: 'string', example: 'eyJhbGciOi...' },
+                  },
+                  required: ['refreshToken'],
+                },
+              },
+            },
+          },
+          responses: {
+            '200': {
+              description: 'Tokens refreshed successfully',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      accessToken: { type: 'string', example: 'eyJhbGciOi...' },
+                      refreshToken: { type: 'string', example: 'eyJhbGciOi...' },
+                    },
+                  },
+                },
+              },
+            },
+            '401': { description: 'Unauthorized (invalid or expired refresh token)' },
+          },
+        },
+      },
+      '/api/auth/logout': {
+        post: {
+          tags: ['auth'],
+          summary: 'User logout',
+          description: 'Logs out the current user by invalidating the refresh token.',
+          security: [{ BearerAuth: [] }],
+          responses: {
+            '204': { description: 'Logout successful' },
+            '401': { description: 'Unauthorized' },
+          },
+        },
+      },
+      '/api/admin': {
+        get: {
+          tags: ['admin'],
+          summary: 'Admin-only route',
+          description: 'An example endpoint that requires ADMIN role.',
+          security: [{ BearerAuth: [] }],
+          responses: {
+            '200': {
+              description: 'Welcome message for admin',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      message: { type: 'string', example: 'Welcome, Admin!' },
+                    },
+                  },
+                },
+              },
+            },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden (user is not an admin)' },
+          },
+        },
+      },
     },
     components: {
       securitySchemes: {
