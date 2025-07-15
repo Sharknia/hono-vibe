@@ -80,12 +80,12 @@
     - [x] Sub-task 2.1: `AuthService`가 커스텀 에러를 던지도록 테스트 코드 수정
     - [x] Sub-task 2.2: `AuthService`가 `ServiceResponse` 대신 성공 시 데이터, 실패 시 커스텀 에러를 던지도록 수정
     - [x] Sub-task 2.3: 테스트 통과 확인 및 커밋/푸시
-- [ ] **Task 3: `auth.routes.ts` 리팩토링**
-    - [ ] Sub-task 3.1: 에러 핸들러 미들웨어 적용에 맞춰 통합 테스트 코드 수정
-    - [ ] Sub-task 3.2: `auth.routes.ts`에서 `ServiceResponse` 분기 처리 로직 ��거
-    - [ ] Sub-task 3.3: 테스트 통과 확인 및 커밋/푸시
+- [x] **Task 3: `auth.routes.ts` 리팩토링**
+    - [x] Sub-task 3.1: 에러 핸들러 미들웨어 적용에 맞춰 통합 테스트 코드 수정
+    - [x] Sub-task 3.2: `auth.routes.ts`에서 `ServiceResponse` 분기 처리 로직 제거
+    - [x] Sub-task 3.3: 테스트 통과 확인 및 커밋/푸시
 
 ### 🔲 Stage 6: 최종 정리 및 문서화
 - [ ] 전체 코드 리뷰 및 리팩토링 (2차)
 - [ ] `README.md` 및 `GEMINI_GUIDE.md` 최종 검토 및 업데이트
-- [ ] **(완료 후)** `dev` 브랜치에 커밋 및 푸시
+- [ ] **(완료 후)** `dev` 브랜치에 ��밋 및 푸시
