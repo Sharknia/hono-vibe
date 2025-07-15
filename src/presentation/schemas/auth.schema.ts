@@ -1,13 +1,19 @@
-import { z } from 'zod';
+import { z } from '@hono/zod-openapi';
 
-// 문서화 전용 스키마
-export const DocRegisterRequestSchema = z.object({
+// 문서화 및 유효성 검사 스키마
+export const RegisterRequestSchema = z.object({
   email: z.string().email().openapi({
     example: 'test@example.com',
   }),
   password: z.string().min(8).openapi({
     example: 'password123',
   }),
+  nickname: z.string().min(3).max(20).openapi({
+    example: 'testuser',
+  }),
+}).openapi({
+  type: 'object',
+  title: 'RegisterRequest',
 });
 
 export const LoginRequestSchema = z.object({

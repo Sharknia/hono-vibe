@@ -60,4 +60,52 @@ describe('User Routes', () => {
       expect(body).not.toHaveProperty('passwordHash');
     });
   });
+
+  describe('GET /api/users/check-nickname/:nickname', () => {
+    it('should return isAvailable: true for a nickname that is not taken', async () => {
+      const req = new Request('http://localhost/api/users/check-nickname/available-nick');
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.isAvailable).toBe(true);
+    });
+
+    it('should return isAvailable: false for a nickname that is already taken', async () => {
+      const req = new Request(`http://localhost/api/users/check-nickname/${testUser.nickname}`);
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.isAvailable).toBe(false);
+    });
+
+    it('should return 400 for an invalid nickname (too short)', async () => {
+      const req = new Request('http://localhost/api/users/check-nickname/ab');
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(400);
+    });
+  });
+
+  describe('GET /api/users/check-email/:email', () => {
+    it('should return isAvailable: true for an email that is not taken', async () => {
+      const req = new Request('http://localhost/api/users/check-email/available@example.com');
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.isAvailable).toBe(true);
+    });
+
+    it('should return isAvailable: false for an email that is already taken', async () => {
+      const req = new Request(`http://localhost/api/users/check-email/${testUser.email}`);
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.isAvailable).toBe(false);
+    });
+
+    it('should return 400 for an invalid email format', async () => {
+      const req = new Request('http://localhost/api/users/check-email/invalid-email');
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(400);
+    });
+  });
 });

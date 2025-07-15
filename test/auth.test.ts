@@ -31,7 +31,7 @@ describe('Auth Routes', () => {
       const req = new Request('http://localhost/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: 'test@example.com', password: 'password123' }),
+        body: JSON.stringify({ email: 'test@example.com', password: 'password123', nickname: 'testuser' }),
       });
       const res = await app.fetch(req, testEnv);
       expect(res.status).toBe(201);
@@ -40,17 +40,30 @@ describe('Auth Routes', () => {
     });
 
     it('should return 409 if email already exists', async () => {
-        await db.insert(schema.users).values({ id: 'user-1', email: 'test@example.com', passwordHash: 'hash' });
+        await db.insert(schema.users).values({ id: 'user-1', email: 'test@example.com', passwordHash: 'hash', nickname: 'testuser' });
         const req = new Request('http://localhost/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: 'test@example.com', password: 'password123' }),
+            body: JSON.stringify({ email: 'test@example.com', password: 'password123', nickname: 'anotheruser' }),
         });
         const res = await app.fetch(req, testEnv);
         expect(res.status).toBe(409);
         const body = await res.json();
         expect(body.message).toBe('Email already in use');
     });
+
+    it('should return 409 if nickname already exists', async () => {
+      await db.insert(schema.users).values({ id: 'user-1', email: 'test@example.com', passwordHash: 'hash', nickname: 'testuser' });
+      const req = new Request('http://localhost/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'another@example.com', password: 'password123', nickname: 'testuser' }),
+      });
+      const res = await app.fetch(req, testEnv);
+      expect(res.status).toBe(409);
+      const body = await res.json();
+      expect(body.message).toBe('Nickname already in use');
+  });
   });
 
   describe('POST /api/auth/login', () => {

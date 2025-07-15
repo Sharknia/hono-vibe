@@ -1,11 +1,17 @@
 import { IUserRepository } from '@/domain/users/user.repository';
 import { User } from '@/domain/users/user.entity';
 import { sign, verify } from 'hono/jwt';
-import { ConflictError, NotFoundError, UnauthorizedError } from '@/domain/errors';
+import {
+  DuplicateEmailError,
+  DuplicateNicknameError,
+  NotFoundError,
+  UnauthorizedError,
+} from '@/domain/errors';
 
-type RegisterUserDto = {
+type SignUpUserDto = {
   email: string;
   password: string;
+  nickname: string;
 };
 
 type LoginUserDto = {
@@ -20,16 +26,21 @@ export class AuthService {
     private readonly refreshSecret: string,
   ) {}
 
-  async register(dto: RegisterUserDto): Promise<void> {
-    const existingUser = await this.userRepository.findByEmail(dto.email);
-    if (existingUser) {
-      throw new ConflictError('Email already in use');
+  async signUp(dto: SignUpUserDto): Promise<void> {
+    const existingUserByEmail = await this.userRepository.findByEmail(dto.email);
+    if (existingUserByEmail) {
+      throw new DuplicateEmailError();
+    }
+
+    const existingUserByNickname = await this.userRepository.findByNickname(dto.nickname);
+    if (existingUserByNickname) {
+      throw new DuplicateNicknameError();
     }
 
     const newUser = await User.create({
       email: dto.email,
       password_plain: dto.password,
-      nickname: null,
+      nickname: dto.nickname,
     });
     await this.userRepository.save(newUser);
   }

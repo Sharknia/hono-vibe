@@ -5,7 +5,7 @@ export type UserProps = {
   id: string;
   email: string;
   passwordHash: string;
-  nickname: string | null;
+  nickname: string;
   role: 'USER' | 'ADMIN';
   refreshToken: string | null;
   createdAt: Date;
@@ -24,7 +24,7 @@ export class User {
       id: uuidv4(),
       email: params.email,
       passwordHash,
-      nickname: params.nickname || null,
+      nickname: params.nickname,
       role: 'USER',
       refreshToken: null,
       createdAt: now,
