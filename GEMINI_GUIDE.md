@@ -40,7 +40,7 @@
 
 ## 2. 프로젝트 구조
 
-이 프로젝트는 DDD(도메인 주도 설계)의 계층형 아키텍처를 따릅니다. 각 디렉토리의 역할은 다음과 같습니다.
+이 프로젝트는 DDD(도메인 주도 설계)의 계층형 아키텍처를 따릅니다. 각 디렉토��의 역할은 다음과 같습니다.
 
 -   `src`: 모든 소스 코드가 위치하는 최상위 디렉토리입니다.
     -   `presentation`: 외부 세계와의 상호작용을 담당합니다. (예: API 엔드포인트, 미들웨어)
@@ -77,7 +77,7 @@
     -   [x] 테스트 작성
     -   [x] 로직 구현 및 테스트 통과
 
-### 🔲 Stage 5: 아키텍처 리팩토링 (TDD)
+### ✅ Stage 5: 아키텍처 리팩토링 (TDD)
 
 -   [x] **Task 1: 커스텀 에러 처리 시스템 도입**
     -   [x] Sub-task 1.1: 커스텀 에러 및 에러 핸들러 미들웨어 테스트 작성
@@ -94,14 +94,18 @@
     -   [x] Sub-task 3.2: `auth.routes.ts`에서 `ServiceResponse` 분기 처리 로직 제거
     -   [x] Sub-task 3.3: 테스트 통과 확인 및 커밋/푸시
 
-### 🔲 Stage 6: 최종 코드 개선 (TDD)
+### ✅ Stage 6: 최종 코드 개선 (TDD)
 
 -   [x] **Task 4: `User` 엔티티 캡슐화**
     -   [x] Sub-task 4.1: `User` 엔티티에 `toProfile()` 메서드 테스트 작성
     -   [x] Sub-task 4.2: `User` 엔티티에 `toProfile()` 메서드 구현
     -   [x] Sub-task 4.3: `user.routes.ts`에서 `toProfile()`을 사용하도록 수정 및 테스트 통과 확인
     -   [x] Sub-task 4.4: 변경사항 커밋/푸시
--   [ ] **Task 5: `authMiddleware` 리팩토링**
-    -   [ ] Sub-task 5.1: `authMiddleware`가 `UnauthorizedError`를 던지도록 테스트 수정
-    -   [ ] Sub-task 5.2: `authMiddleware`가 에러 발생 시 `UnauthorizedError`를 던지도록 수정
-    -   [ ] Sub-task 5.3: 테스트 통과 확인 및 커밋/푸시
+-   [x] **Task 5: `authMiddleware` 리팩토링**
+    -   [x] Sub-task 5.1: `authMiddleware`가 `UnauthorizedError`를 던지도록 테스트 수정
+    -   [x] Sub-task 5.2: `authMiddleware`가 에러 발생 시 `UnauthorizedError`를 던지도록 수정
+    -   [x] Sub-task 5.3: 테스트 통과 확인 및 커밋/푸시
+
+### 🔲 Stage 7: 최종 정리 및 문서화
+- [ ] `README.md` 및 `GEMINI_GUIDE.md` 최종 검토 및 업데이트
+- [ ] **(완료 후)** `dev` 브랜치에 커밋 및 푸시

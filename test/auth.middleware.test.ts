@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { describe, it, expect } from 'vitest';
 import { sign } from 'hono/jwt';
 import { authMiddleware, AuthPayload } from '@/presentation/middlewares/auth.middleware';
+import { errorHandler } from '@/presentation/middlewares/error.middleware';
 
 describe('Auth Middleware', () => {
   const testEnv = {
@@ -10,6 +11,7 @@ describe('Auth Middleware', () => {
 
   // Mock app to test the middleware
   const app = new Hono<{ Variables: { authPayload: AuthPayload } }>();
+  app.onError(errorHandler); // Register the global error handler
   app.use('/protected/*', authMiddleware);
   app.get('/protected/profile', (c) => {
     const payload = c.get('authPayload');
@@ -20,6 +22,8 @@ describe('Auth Middleware', () => {
     const req = new Request('http://localhost/protected/profile');
     const res = await app.fetch(req, testEnv);
     expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.message).toBe('Unauthorized: No token provided');
   });
 
   it('should return 401 for an invalid token', async () => {
@@ -28,6 +32,8 @@ describe('Auth Middleware', () => {
     });
     const res = await app.fetch(req, testEnv);
     expect(res.status).toBe(401);
+    const body = await res.json();
+    expect(body.message).toBe('Unauthorized: Invalid or expired token');
   });
 
   it('should allow access and set authPayload in context for a valid token', async () => {

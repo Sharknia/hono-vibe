@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { sign } from 'hono/jwt';
 import { authMiddleware, AuthPayload } from '@/presentation/middlewares/auth.middleware';
 import { roleMiddleware } from '@/presentation/middlewares/role.middleware';
+import { errorHandler } from '@/presentation/middlewares/error.middleware';
 
 describe('Role Middleware', () => {
   const testEnv = {
@@ -11,6 +12,9 @@ describe('Role Middleware', () => {
 
   type AppEnv = { Variables: { authPayload: AuthPayload } };
   const app = new Hono<AppEnv>();
+
+  // Register error handler first
+  app.onError(errorHandler);
 
   // Setup middleware chain
   app.use('/admin/*', authMiddleware);
