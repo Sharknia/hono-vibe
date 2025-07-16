@@ -9,6 +9,7 @@ import { AuthPayload, authMiddleware } from '@/presentation/middlewares/auth.mid
 import { IUserRepository } from '@/domain/users/user.repository';
 import { errorHandler } from './presentation/middlewares/error.middleware';
 import { roleMiddleware } from './presentation/middlewares/role.middleware';
+import { ErrorResponseComponent } from '@/presentation/schemas/common.schema';
 
 // Define the types for the context variables
 type AppEnv = {
@@ -134,8 +135,8 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '400': { description: 'Bad request (validation error)' },
-            '409': { description: 'Conflict (email already exists)' },
+            '400': { '$ref': '#/components/responses/BadRequest' },
+            '409': { '$ref': '#/components/responses/Conflict' },
           },
         },
       },
@@ -174,7 +175,7 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '401': { description: 'Unauthorized (invalid credentials)' },
+            '401': { '$ref': '#/components/responses/Unauthorized' },
           },
         },
       },
@@ -212,7 +213,7 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '401': { description: 'Unauthorized (invalid or expired refresh token)' },
+            '401': { '$ref': '#/components/responses/Unauthorized' },
           },
         },
       },
@@ -224,7 +225,7 @@ app.get('/api/openapi.json', (c) => {
           security: [{ BearerAuth: [] }],
           responses: {
             '204': { description: 'Logout successful' },
-            '401': { description: 'Unauthorized' },
+            '401': { '$ref': '#/components/responses/Unauthorized' },
           },
         },
       },
@@ -260,7 +261,7 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '400': { description: 'Bad request (validation error)' },
+            '400': { '$ref': '#/components/responses/BadRequest' },
           },
         },
       },
@@ -295,7 +296,7 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '400': { description: 'Bad request (validation error)' },
+            '400': { '$ref': '#/components/responses/BadRequest' },
           },
         },
       },
@@ -322,7 +323,7 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '401': { description: 'Unauthorized' },
+            '401': { '$ref': '#/components/responses/Unauthorized' },
           },
         },
       },
@@ -346,13 +347,34 @@ app.get('/api/openapi.json', (c) => {
                 },
               },
             },
-            '401': { description: 'Unauthorized' },
-            '403': { description: 'Forbidden (user is not an admin)' },
+            '401': { '$ref': '#/components/responses/Unauthorized' },
+            '403': { '$ref': '#/components/responses/Forbidden' },
           },
         },
       },
     },
     components: {
+      schemas: {
+        ...ErrorResponseComponent
+      },
+      responses: {
+        BadRequest: {
+          description: 'Bad Request',
+          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+        },
+        Unauthorized: {
+          description: 'Unauthorized',
+          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+        },
+        Forbidden: {
+          description: 'Forbidden',
+          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+        },
+        Conflict: {
+          description: 'Conflict',
+          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+        },
+      },
       securitySchemes: {
         BearerAuth: {
           type: 'http',
