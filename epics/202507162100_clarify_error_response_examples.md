@@ -6,8 +6,8 @@
 
 ## Task 1: OpenAPI 명세 수정
 
--   [ ] **Subtask 1.1:** `index.ts`의 `openApiSpec` 객체에서, `components.responses` 섹션을 찾는다.
--   [ ] **Subtask 1.2:** `BadRequest`, `Unauthorized`, `Forbidden`, `Conflict` 등 각 공통 에러 응답 정의를 수정한다.
+-   [x] **Subtask 1.1:** `index.ts`의 `openApiSpec` 객체에서, `components.responses` 섹션을 찾는다.
+-   [x] **Subtask 1.2:** `BadRequest`, `Unauthorized`, `Forbidden`, `Conflict` 등 각 공통 에러 응답 정의를 수정한다.
     -   기존: `$ref`를 사용하여 스키마만 참조
     -   변경: 스키마 참조는 유지하되, 각 응답에 맞는 `statusCode`, `error`, `message`를 포함하는 `example`을 명시적으로 추가한다.
     -   예시 (`Unauthorized`):

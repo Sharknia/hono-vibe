@@ -360,19 +360,31 @@ app.get('/api/openapi.json', (c) => {
       responses: {
         BadRequest: {
           description: 'Bad Request',
-          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+          content: { 'application/json': { 
+            schema: { '$ref': '#/components/schemas/ErrorResponse' },
+            example: { statusCode: 400, error: 'Bad Request', message: 'Invalid request parameters' }
+          } },
         },
         Unauthorized: {
           description: 'Unauthorized',
-          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+          content: { 'application/json': { 
+            schema: { '$ref': '#/components/schemas/ErrorResponse' },
+            example: { statusCode: 401, error: 'Unauthorized', message: 'Authorization header is missing or invalid' }
+          } },
         },
         Forbidden: {
           description: 'Forbidden',
-          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+          content: { 'application/json': { 
+            schema: { '$ref': '#/components/schemas/ErrorResponse' },
+            example: { statusCode: 403, error: 'Forbidden', message: 'You do not have permission to access this resource' }
+          } },
         },
         Conflict: {
           description: 'Conflict',
-          content: { 'application/json': { schema: { '$ref': '#/components/schemas/ErrorResponse' } } },
+          content: { 'application/json': { 
+            schema: { '$ref': '#/components/schemas/ErrorResponse' },
+            example: { statusCode: 409, error: 'Conflict', message: 'The resource already exists' }
+          } },
         },
       },
       securitySchemes: {
