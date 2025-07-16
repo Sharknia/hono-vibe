@@ -1,16 +1,18 @@
-import { z } from 'zod';
+import { z } from '@hono/zod-openapi';
 
 export const ErrorSchema = z.object({
-  code: z.number().int().positive().openapi({
-    example: 404,
-    description: 'Error code',
+  statusCode: z.number().int().openapi({
+    example: 400,
+    description: 'HTTP status code',
+  }),
+  error: z.string().openapi({
+    example: 'Bad Request',
+    description: 'Error type',
   }),
   message: z.string().openapi({
-    example: 'Not Found',
+    example: 'Invalid input provided',
     description: 'Error message',
   }),
-}).openapi({
-    type: 'object',
-    title: 'ErrorResponse',
-    description: 'Standard error response',
+}).openapi('ErrorResponse', {
+  description: 'Standard error response format',
 });
