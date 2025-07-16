@@ -1,35 +1,71 @@
 import { Hono } from 'hono';
+import { z } from 'zod';
 import { errorHandler } from '@/presentation/middlewares/error.middleware';
-import { HttpError } from '@/domain/errors';
+import { NotFoundError } from '@/domain/errors';
 import { describe, it, expect } from 'vitest';
+import { ErrorSchema } from '@/presentation/schemas/common.schema';
 
 describe('Error Handler Middleware', () => {
   const app = new Hono();
 
-  // Test route that throws a specific HttpError
-  app.get('/test-error', (c) => {
-    throw new HttpError(404, 'Not Found Test');
+  app.get('/not-found-error', () => {
+    throw new NotFoundError('Custom Not Found Message');
   });
 
-  // Test route that throws a generic error
-  app.get('/generic-error', (c) => {
-    throw new Error('Something went wrong');
+  app.get('/generic-error', () => {
+    throw new Error('A generic error occurred');
   });
-  
-  // Apply the error handler
+
+  app.get('/zod-error', () => {
+    const schema = z.object({
+      name: z.string(),
+      age: z.number({
+        required_error: 'age is Required',
+        invalid_type_error: 'age must be a number',
+      }),
+    });
+    // This will throw a ZodError because 'age' is missing
+    schema.parse({ name: 'test' });
+  });
+
   app.onError(errorHandler);
 
-  it('should handle HttpError and return correct status and message', async () => {
-    const res = await app.request('/test-error');
+  it('should handle HttpError (NotFoundError) and format response using ErrorSchema', async () => {
+    const res = await app.request('/not-found-error');
     expect(res.status).toBe(404);
+    
     const json = await res.json();
-    expect(json.message).toBe('Not Found Test');
+    const validation = ErrorSchema.safeParse(json);
+    
+    expect(validation.success).toBe(true);
+    expect(json.statusCode).toBe(404);
+    expect(json.error).toBe('NotFound');
+    expect(json.message).toBe('Custom Not Found Message');
   });
 
-  it('should handle generic Error and return 500 status', async () => {
+  it('should handle generic Error and format response using ErrorSchema', async () => {
     const res = await app.request('/generic-error');
     expect(res.status).toBe(500);
+
     const json = await res.json();
-    expect(json.message).toBe('Internal Server Error');
+    const validation = ErrorSchema.safeParse(json);
+
+    expect(validation.success).toBe(true);
+    expect(json.statusCode).toBe(500);
+    expect(json.error).toBe('Internal Server Error');
+    expect(json.message).toBe('A generic error occurred');
+  });
+
+  it('should handle ZodError and format response using ErrorSchema', async () => {
+    const res = await app.request('/zod-error');
+    expect(res.status).toBe(400);
+
+    const json = await res.json();
+    const validation = ErrorSchema.safeParse(json);
+
+    expect(validation.success).toBe(true);
+    expect(json.statusCode).toBe(400);
+    expect(json.error).toBe('Bad Request');
+    expect(json.message).toContain('age: Invalid input: expected number, received undefined');
   });
 });

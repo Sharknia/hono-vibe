@@ -7,6 +7,7 @@ export class HttpError extends Error {
 
   constructor(statusCode: number, message: string) {
     super(message);
+    this.name = 'HttpError';
     this.statusCode = statusCode;
     Object.setPrototypeOf(this, HttpError.prototype);
   }
@@ -16,29 +17,34 @@ export class HttpError extends Error {
 export class NotFoundError extends HttpError {
   constructor(message = 'Resource not found') {
     super(404, message);
+    this.name = 'NotFoundError';
   }
 }
 
 export class UnauthorizedError extends HttpError {
   constructor(message = 'Unauthorized') {
     super(401, message);
+    this.name = 'UnauthorizedError';
   }
 }
 
 export class ConflictError extends HttpError {
   constructor(message = 'Conflict') {
     super(409, message);
+    this.name = 'ConflictError';
   }
 }
 
 export class DuplicateEmailError extends ConflictError {
   constructor(message = 'Email already in use') {
     super(message);
+    this.name = 'DuplicateEmailError';
   }
 }
 
 export class DuplicateNicknameError extends ConflictError {
   constructor(message = 'Nickname already in use') {
     super(message);
+    this.name = 'DuplicateNicknameError';
   }
 }
