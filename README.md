@@ -54,29 +54,46 @@ cp .dev.vars.example .dev.vars
 -   `CLOUDFLARE_DATABASE_ID`: `wrangler.toml`에 명시된 D1 데이터베이스 ID
 -   `CLOUDFLARE_D1_API_TOKEN`: D1에 접근할 수 있는 API 토큰
 
-### 3. 데이터베이스 스키마 마이그레이션 파일 생성
+### 3. 데이터베이스 마이그레이션
 
-프로젝트의 데이터베이스 스키마(`src/infrastructure/db/schema.ts`)가 변경될 때마다, 아래 명령어를 실행하여 마이그레이션 파일을 생성해야 합니다.
+스키마(`src/infrastructure/db/schema.ts`) 변경 후, 마이그레이션 파일을 먼저 생성해야 합니다.
 
 ```bash
 # .dev.vars에 Cloudflare 정보가 설정되어 있어야 합니다.
 npx drizzle-kit generate
 ```
 
-이 명령어는 `drizzle` 디렉토리에 SQL 마이그��이션 파일을 생성합니다.
+생성된 마이그레이션 파일은 다음 명령어를 통해 데이터베이스에 적용할 수 있습니다.
 
-### 4. 로컬 데이터베이스에 스키마 적용
-
-생성된 마이그레이션 파일을 로컬 D1 데이터베이스에 적용합니다.
+**로컬 DB (개발용)**
 
 ```bash
-npx wrangler d1 migrations apply hono-db --local
+# 로컬 D1 에뮬레이션 DB에 스키마를 적용합니다.
+npx wrangler d1 migrations apply hono_db --local
 ```
 
-### 5. 로컬 개발 서버 실행
+**원격 DB (프로덕션용)**
 
 ```bash
+# 실제 Cloudflare D1 프로덕션 DB에 스키마를 적용합니다.
+npx wrangler d1 migrations apply hono_db --remote
+```
+
+### 4. 개발 서버 실행
+
+**로컬 DB 연결 (기본값)**
+
+```bash
+# .wrangler/ 폴더에 생성된 로컬 DB를 사용하여 서버를 실행합니다.
 npm run dev
+```
+
+**원격 DB 연결**
+
+```bash
+# 실제 Cloudflare D1 프로덕션 DB에 연결하여 서버를 실행합니다.
+# 주의: 프로덕션 데이터에 직접 영향을 줄 수 있습니다.
+npm run dev --remote
 ```
 
 서버가 시작되면 `http://localhost:8787` 주소로 API 요청을 보낼 수 있습니다.
@@ -104,7 +121,7 @@ npm test
 
 ## 프로젝트 구조
 
-이 프로젝트는 DDD(도메인 주도 설계)의 계층형 아키텍처를 따릅니다. 각 디렉토���의 역할은 다음과 같습니다.
+이 프로젝트는 DDD(도메인 주도 설계)의 계층형 아키텍처를 따릅니다. 각 디렉토리의 역할은 다음과 같습니다.
 
 -   `src`: 모든 소스 코드가 위치하는 최상위 디렉토리입니다.
     -   `presentation`: 외부 세계와의 상호작용을 담당합니다. (예: API 엔드포인트, 미들웨어)
@@ -114,9 +131,9 @@ npm test
         -   `services`: 특정 비즈니스 로직을 수행하는 서비스 클래스를 포함합니다. (예: `AuthService`)
     -   `domain`: 핵심 비즈니스 로직과 도메인 모델이 위치합니다. 다른 계층에 대한 의존성이 없습니다.
         -   `users`: 사용자 도메인과 관련된 엔티티, 리포지토리 인터페이스 등을 정의합니다.
-            -   `user.entity.ts`: 사용자 도메인 객체(Entity)를 정의합니다.
+            -   `user.entity.ts`: 사용�� 도메인 객체(Entity)를 정의합니다.
             -   `user.repository.ts`: 사용자 데이터에 접근하기 위한 리포지토리의 인터페이스를 정의합니다.
-    -   `infrastructure`: 데이터베이스, 외부 API 연동 등 기술적인 세부사항을 구현합니다. Domain 계층의 인터페이스를 구현��니다.
+    -   `infrastructure`: 데이터베이스, 외부 API 연동 등 기술적인 세부사항을 구현합니다. Domain 계층의 인터페이스를 구현합니다.
         -   `db`: Drizzle ORM 스키마 및 데이터베이스 연결 설정을 포함합니다.
         -   `repositories`: Domain 계층에 정의된 리포지토리 인터페이스의 실제 구현체를 작성합니다. (예: `DrizzleUserRepository`)
 -   `test`: 모든 테스트 코드가 위치합니다. `src` 디렉토리 구조를 미러링하여 각 기능별 테스트를 작성합니다.
