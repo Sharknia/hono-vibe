@@ -32,12 +32,5 @@ export const ErrorResponseComponent = {
 };
 
 export const SuccessSchema = z.object({
-  message: z.string().openapi({
-    example: 'Operation successful',
-    description: 'Success message',
-  }),
-}).openapi({
-    type: 'object',
-    title: 'SuccessResponse',
-    description: 'Standard success response',
+  message: z.string(),
 });
