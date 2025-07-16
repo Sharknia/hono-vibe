@@ -37,6 +37,16 @@ describe('OpenAPI Specification Error Handling', () => {
     expect(unauthorized.content['application/json'].schema.$ref).toBe('#/components/schemas/ErrorResponse');
   });
 
+  it('should have a specific example for the 401 Unauthorized response', async () => {
+    const json = await getSpec();
+    const unauthorized = json.components.responses.Unauthorized;
+    const example = unauthorized.content['application/json'].example;
+    
+    expect(example).toBeDefined();
+    expect(example.statusCode).toBe(401);
+    expect(example.error).toBe('Unauthorized');
+  });
+
   it('should use $ref for error responses in /api/auth/register', async () => {
     const json = await getSpec();
     const responses = json.paths['/api/auth/register'].post.responses;

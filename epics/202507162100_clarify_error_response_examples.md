@@ -29,9 +29,9 @@
 
 ## Task 2: 테스트를 통한 검증
 
--   [ ] **Subtask 2.1:** `test/openapi.test.ts`에 새로운 테스트 케이스를 추가한다.
--   [ ] **Subtask 2.2:** 추가된 테스트는 `/api/openapi.json`을 호출하여, `components.responses.Unauthorized`와 같은 특정 에러 응답의 `content.application/json.example` 필드에 올바른 `statusCode` (예: 401)가 포함되어 있는지 검증한다. (TDD)
--   [ ] **Subtask 2.3:** `npm test`를 실행하여 모든 테스트가 통과하는지 확인한다.
+-   [x] **Subtask 2.1:** `test/openapi.test.ts`에 새로운 테스트 케이스를 추가한다.
+-   [x] **Subtask 2.2:** 추가된 테스트는 `/api/openapi.json`을 호출하여, `components.responses.Unauthorized`와 같은 특정 에러 응답의 `content.application/json.example` 필드에 올바른 `statusCode` (예: 401)가 포함되어 있는지 검증한다. (TDD)
+-   [x] **Subtask 2.3:** `npm test`를 실행하여 모든 테스트가 통과하는지 확인한다.
 
 ## Task 3: 최종 검토 및 정리
 
