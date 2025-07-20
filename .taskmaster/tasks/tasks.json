@@ -167,7 +167,7 @@
             "description": "알림 시스템의 기본 구조가 될 NotificationStrategy 인터페이스를 정의합니다. 이 인터페이스는 모든 알림 채널이 구현해야 하는 메서드를 포함합니다.",
             "dependencies": [],
             "details": "NotificationStrategy 인터페이스는 다음 메서드를 포함해야 합니다:\n1. send(user, message): 사용자에게 알림을 보내는 메서드\n2. validateMessage(message): 메시지 형식이 유효한지 검증하는 메서드\n3. getType(): 알림 유형을 반환하는 메서드\n\n인터페이스 구현 예시:\n```typescript\ninterface NotificationStrategy {\n  send(user: User, message: NotificationMessage): Promise<NotificationResult>;\n  validateMessage(message: NotificationMessage): boolean;\n  getType(): string;\n}\n\ninterface NotificationMessage {\n  title: string;\n  content: string;\n  url?: string;\n  additionalData?: Record<string, any>;\n}\n\ninterface NotificationResult {\n  success: boolean;\n  messageId?: string;\n  error?: Error;\n  timestamp: Date;\n}\n```",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "인터페이스 정의에 대한 타입 검사를 수행합니다. TypeScript의 타입 시스템을 활용하여 인터페이스가 올바르게 정의되었는지 확인합니다."
           },
           {
@@ -307,7 +307,7 @@
     ],
     "metadata": {
       "created": "2025-07-20T13:38:52.424Z",
-      "updated": "2025-07-20T14:20:24.684Z",
+      "updated": "2025-07-20T14:27:35.901Z",
       "description": "Tasks for master context"
     }
   }
