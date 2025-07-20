@@ -10,7 +10,7 @@
 
 -   **엄격한 계층 분리 (Strict Layering):** Domain-Driven Design(DDD) 원칙에 따라 각 계층(Presentation, Application, Domain, Infrastructure)의 역할과 책임을 명확히 분리하여 코드의 복잡성을 낮추고 유지보수성을 높입니다.
 -   **테스트 주도 개발 (Test-Driven Development):** 모든 비즈니스 로직은 반드시 테스트 코드로 검증되어야 합니다. 이는 코드의 안정성을 보장하고 자신감 있는 리팩토링을 가능하게 합니다.
--   **선언적 프로그래밍 (Declarative Programming):** Zod와 같은 라이브러리를 활용하여 "무엇을 할 것인지"를 선언적으로 기술함으로써, "어���게 할 것인지"에 대한 복잡한 절차적 코드를 줄입니다.
+-   **선언적 프로그래밍 (Declarative Programming):** Zod와 같은 라이브러리를 활용하여 "무엇을 할 것인지"를 선언적으로 기술함으로써, "어떻게 할 것인지"에 대한 복잡한 절차적 코드를 줄입니다.
 
 ### 1.1. 아키텍처: 요청(Request)의 여정
 
@@ -45,7 +45,7 @@
 5.  **`src/domain/` & `src/infrastructure/` (도메인 & 인프라):**
 
     -   **Domain:** `user.entity.ts`, `user.repository.ts`처럼 순수한 비즈니스 규칙과 인터페이스를 정의합니다. 외부 의존성이 전혀 없습니다.
-    -   **Infrastructure:** `drizzle.user.repository.ts`처럼 도메인 인터페이스에 대한 실제 구현을 담당합니다. 데이터베이스와 직접 통신하는 ��드가 여기에 위치합니다.
+    -   **Infrastructure:** `drizzle.user.repository.ts`처럼 도메인 인터페이스에 대한 실제 구현을 담당합니다. 데이터베이스와 직접 통신하는 코드가 여기에 위치합니다.
 
 6.  **중앙 집중식 에러 처리:**
     -   서비스나 라우트 어디서든 `throw new ConflictError(...)`와 같이 `domain/errors.ts`에 정의된 커스텀 에러를 던지면, `error.middleware.ts`가 이를 가로채 일관된 형식의 JSON 오류 응답을 생성합니다.
@@ -96,7 +96,7 @@
 ### 2.2. How-To: 에러 처리하기
 
 -   **절대 `try-catch`로 직접 에러 응답을 만들지 마세요.**
--   비즈니스 로직에�� 상황에 맞는 에러를 던지기만 하면 됩니다.
+-   비즈니스 로직에서 상황에 맞는 에러를 던지기만 하면 됩니다.
     -   **리소스를 찾을 수 없을 때:** `throw new NotFoundError('User not found');`
     -   **중복된 데이터가 있을 때:** `throw new ConflictError('Nickname already exists');`
     -   **권한이 없을 때:** `throw new UnauthorizedError('Invalid credentials');`
@@ -532,3 +532,8 @@ These commands make AI calls and may take up to a minute:
 ---
 
 _This guide ensures Claude Code has immediate access to Task Master's essential functionality for agentic development workflows._
+
+---
+
+## 3. 작업 수행 규칙 (Task Execution Rules)
+-   **명시적 승인:** 새로운 Task 또는 Sub-task를 시작하기 전, 사용자에게 진행 계획을 보고하고 명시적인 승인을 받아야 합니다. 절대로 임의로 작업을 진행하지 않습니다.
