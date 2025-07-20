@@ -85,7 +85,7 @@ npx wrangler d1 migrations apply hono_db --remote
 
 ```bash
 # .wrangler/ 폴더에 생성된 로컬 DB를 사용하여 서버를 실행합니다.
-npm run dev
+npm run dev -- --port 8787
 ```
 
 **원격 DB 연결**
