@@ -1,0 +1,211 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "데이터베이스 스키마 설계 및 구현",
+        "description": "PRD에 정의된 데이터베이스 스키마를 구현하고 필요한 테이블과 관계를 설정합니다.",
+        "details": "다음 테이블을 생성합니다:\n1. Users: 사용자 정보 저장 (id, email, password, nickname, role, notification_preferences, snooze_until, push_token, createdAt, updatedAt)\n2. Keywords: 전체 키워드 목록 (id, name, createdAt)\n3. UserKeywords: 사용자와 키워드의 구독 관계 (userId, keywordId)\n4. CrawlingSites: 크롤링 대상 사이트 정보 (id, name, baseUrl, strategy)\n5. CrawledResults: 크롤링 결과 데이터 (id, keywordId, siteId, title, url, price, crawledAt)\n6. Notifications: 사용자에게 발송된 알림 기록 (id, userId, title, content, url, type, is_read, createdAt)\n\n각 테이블 간의 관계를 설정하고, 인덱스를 적절히 생성하여 쿼리 성능을 최적화합니다. 데이터베이스 마이그레이션 스크립트를 작성하여 스키마 변경을 관리합니다.",
+        "testStrategy": "각 테이블 생성 및 관계 설정이 올바르게 되었는지 확인하는 단위 테스트를 작성합니다. 샘플 데이터를 삽입하고 조회하여 스키마가 예상대로 작동하는지 검증합니다. 외래 키 제약 조건이 제대로 작동하는지 테스트합니다.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "크롤링 시스템 아키텍처 구현",
+        "description": "전략 패턴을 적용한 확장 가능한 크롤링 시스템 아키텍처를 설계하고 구현합니다.",
+        "status": "pending",
+        "dependencies": [
+          5,
+          8
+        ],
+        "priority": "high",
+        "details": "크롤링 시스템은 다음과 같은 구조로 구현합니다:\n1. CrawlerStrategy 인터페이스 정의: 모든 크롤러가 구현해야 하는 메서드 정의 (예: crawl(keyword))\n2. 사이트별 구체적인 크롤러 클래스 구현 (예: QuasarzoneCrawler, DanawaCrawler 등)\n3. CrawlerFactory 클래스 구현: 사이트 ID나 전략 식별자를 기반으로 적절한 크롤러 인스턴스를 생성\n4. CrawlingService 클래스 구현: 크롤링 작업을 조정하고 결과를 처리\n\n병렬 처리를 위해 Promise.all()을 사용하여 여러 사이트와 키워드에 대한 크롤링을 동시에 수행합니다. 크롤링 결과는 CrawledResults 테이블에 저장합니다.\n\n크롤링 시스템은 관리자 사용자 및 키워드 관리 API와 연동되어 작동하며, 이벤트 기반 아키텍처를 통해 다른 시스템과의 결합도를 낮춥니다. 오류 발생 시 적절한 로깅과 재시도 메커니즘을 구현하여 시스템의 안정성을 보장합니다.",
+        "testStrategy": "각 크롤러 구현체에 대한 단위 테스트를 작성합니다. 모킹을 사용하여 실제 웹사이트에 접근하지 않고도 크롤러의 동작을 테스트합니다. 통합 테스트를 통해 여러 크롤러가 함께 작동하는 시나리오를 검증합니다. 병렬 처리 성능을 측정하는 벤치마크 테스트를 구현합니다.\n\n또한 관리자 사용자 및 키워드 관리 API와의 연동 테스트를 수행하여 크롤링 시스템이 올바르게 키워드를 처리하는지 확인합니다. 다양한 오류 시나리오(네트워크 오류, 사이트 구조 변경 등)에서 시스템의 오류 처리 능력을 테스트합니다.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "CrawlerStrategy 인터페이스 정의",
+            "description": "모든 크롤러가 구현해야 하는 공통 인터페이스를 정의합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "사이트별 크롤러 구현",
+            "description": "주요 핫딜 사이트에 대한 구체적인 크롤러 클래스를 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "CrawlerFactory 클래스 구현",
+            "description": "사이트 ID나 전략 식별자를 기반으로 적절한 크롤러 인스턴스를 생성하는 팩토리 클래스를 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "CrawlingService 클래스 구현",
+            "description": "크롤링 작업을 조정하고 결과를 처리하는 서비스 클래스를 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "병렬 처리 구현",
+            "description": "Promise.all()을 사용하여 여러 사이트와 키워드에 대한 크롤링을 동시에 수행하는 기능을 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "오류 처리 및 재시도 메커니즘 구현",
+            "description": "크롤링 과정에서 발생할 수 있는 다양한 오류를 처리하고 필요시 재시도하는 메커니즘을 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "관리자 키워드 관리 API 연동",
+            "description": "관리자 키워드 관리 API와 연동하여 크롤링할 키워드를 동적으로 관리할 수 있도록 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Cloudflare Workers Cron 설정 및 크롤링 트리거 구현",
+        "description": "Cloudflare Workers의 Cron 기능을 사용하여 30분마다 크롤링을 트리거하는 시스템을 구현합니다.",
+        "details": "다음 단계로 구현합니다:\n1. Cloudflare Workers 프로젝트 설정\n2. wrangler.toml 파일에 cron 트리거 설정 (예: `crons = [\"*/30 * * * *\"]`)\n3. 크롤링 API 엔드포인트 구현 (/api/crawl)\n4. Worker 스크립트 작성: 30분마다 모든 키워드에 대한 크롤링을 트리거\n5. 크롤링 작업 상태 모니터링 및 로깅 기능 추가\n\n크롤링 API는 다음 기능을 포함합니다:\n- 모든 활성 키워드 조회\n- 각 키워드에 대해 등록된 모든 사이트를 크롤링\n- 새로운 결과 감지 시 알림 시스템에 이벤트 발행",
+        "testStrategy": "로컬 환경에서 wrangler를 사용하여 Cron 트리거를 시뮬레이션하고 크롤링 API가 올바르게 호출되는지 테스트합니다. 다양한 시나리오(키워드 없음, 많은 키워드 등)에서 크롤링 시스템이 올바르게 작동하는지 검증합니다. 로깅 및 모니터링 기능이 제대로 작동하는지 확인합니다.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "알림 시스템 아키텍처 구현",
+        "description": "전략 패턴을 적용한 확장 가능한 알림 시스템을 설계하고 구현합니다.",
+        "details": "알림 시스템은 다음과 같은 구조로 구현합니다:\n1. NotificationStrategy 인터페이스 정의: 모든 알림 채널이 구현해야 하는 메서드 정의 (예: send(user, message))\n2. 채널별 구체적인 알림 클래스 구현 (예: EmailNotifier, PushNotifier 등)\n3. NotifierFactory 클래스 구현: 알림 유형에 따라 적절한 Notifier 인스턴스를 생성\n4. NotificationService 클래스 구현: 사용자 설정에 따라 적절한 채널로 알림을 발송\n\n병렬 처리를 위해 Promise.all()을 사용하여 여러 사용자에게 알림을 동시에 발송합니다. 알림 발송 결과는 Notifications 테이블에 기록합니다.",
+        "testStrategy": "각 알림 구현체에 대한 단위 테스트를 작성합니다. 모킹을 사용하여 실제 이메일이나 푸시 알림을 보내지 않고도 알림 시스템의 동작을 테스트합니다. 통합 테스트를 통해 여러 알림 채널이 함께 작동하는 시나리오를 검증합니다. 사용자 설정에 따라 올바른 채널로 알림이 발송되는지 확인합니다.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "사용자 키워드 관리 API 구현",
+        "description": "사용자가 키워드를 조회, 구독, 삭제할 수 있는 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/keywords: 구독 가능한 전체 키워드 목록 조회\n2. GET /api/me/keywords: 내가 구독한 키워드 목록 조회\n3. POST /api/me/keywords: 키워드 구독 (Request Body: { \"keywordId\": 1 })\n4. DELETE /api/me/keywords/:keywordId: 구독한 키워드 삭제\n5. GET /api/keywords/:keywordId/results: 특정 키워드의 최신 핫딜 결과 조회\n\n각 API는 사용자 인증을 확인하고, 적절한 권한이 있는지 검증합니다. 데이터베이스 쿼리를 최적화하여 빠른 응답 시간을 보장합니다. 페이지네이션을 적용하여 대량의 데이터를 효율적으로 처리합니다.",
+        "testStrategy": "각 API 엔드포인트에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 시나리오(정상 케이스, 에러 케이스, 경계 조건 등)에서 API가 올바르게 동작하는지 검증합니다. 인증 및 권한 검사가 제대로 작동하는지 확인합니다. 성능 테스트를 통해 API의 응답 시간과 처리량을 측정합니다.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "사용자 알림 설정 및 관리 API 구현",
+        "description": "사용자가 알림 설정을 조회하고 변경할 수 있는 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/me/notifications/settings: 내 알림 설정 조회\n2. PUT /api/me/notifications/settings: 내 알림 설정 수정 (Request Body: {\"email\": true, \"push\": false, \"snoozeUntil\": \"2025-08-01T00:00:00Z\"})\n3. GET /api/me/notifications: 내 알림 기록 목록 조회 (알림 보관함)\n4. POST /api/me/notifications/:notificationId/read: 특정 알림을 읽음 상태로 변경\n\n알림 일시 중지(Snooze) 기능을 구현하여 사용자가 지정한 기간 동안 알림을 받지 않도록 설정할 수 있습니다. 알림 보관함에서는 페이지네이션과 필터링 기능을 제공하여 사용자가 쉽게 알림을 관리할 수 있도록 합니다.",
+        "testStrategy": "각 API 엔드포인트에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 알림 설정 시나리오에서 시스템이 올바르게 동작하는지 검증합니다. 알림 일시 중지 기능이 정확히 작동하는지 확인합니다. 알림 보관함의 페이지네이션과 필터링 기능이 올바르게 동작하는지 테스트합니다.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "관리자 대시보드 API 구현",
+        "description": "관리자가 시스템 핵심 지표를 모니터링할 수 있는 대시보드 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/admin/dashboard: 대시보드 데이터 조회\n\n대시보드 API는 다음과 같은 정보를 제공합니다:\n- 크롤링 성공/실패 현황 통계\n- 알림 발송량 통계 (채널별, 시간대별)\n- 인기 키워드 순위\n- 활성 사용자 수\n- 시스템 성능 지표\n\n데이터는 캐싱을 적용하여 빠른 응답 시간을 보장합니다. 관리자 권한을 가진 사용자만 접근할 수 있도록 인증 및 권한 검사를 구현합니다.",
+        "testStrategy": "대시보드 API에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 데이터 시나리오에서 통계 계산이 정확한지 검증합니다. 캐싱 메커니즘이 올바르게 작동하는지 확인합니다. 관리자 권한 검사가 제대로 동작하는지 테스트합니다.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "관리자 사용자 및 키워드 관리 API 구현",
+        "description": "관리자가 사용자와 키워드를 관리할 수 있는 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/admin/users: 전체 유저 목록 조회\n2. GET /api/admin/users/:userId: 특정 유저 정보 조회\n3. GET /api/admin/keywords: 전체 키워드 리스트 조회\n4. POST /api/admin/keywords: 새 키워드 추가 (Request Body: { \"name\": \"새키워드\" })\n5. PUT /api/admin/keywords/:keywordId: 키워드 수정\n6. DELETE /api/admin/keywords/:keywordId: 키워드 삭제\n\n각 API는 관리자 권한을 가진 사용자만 접근할 수 있도록 인증 및 권한 검사를 구현합니다. 페이지네이션과 필터링 기능을 제공하여 대량의 데이터를 효율적으로 관리할 수 있도록 합니다.",
+        "testStrategy": "각 API 엔드포인트에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 시나리오에서 API가 올바르게 동작하는지 검증합니다. 관리자 권한 검사가 제대로 작동하는지 확인합니다. 키워드 관리 작업이 데이터베이스에 올바르게 반영되는지 테스트합니다.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "크롤링 결과와 알림 시스템 연동",
+        "description": "크롤링 시스템에서 새로운 핫딜 정보가 감지되면 알림 시스템을 트리거하는 연동 로직을 구현합니다.",
+        "details": "다음 기능을 구현합니다:\n1. 크롤링 결과 비교 로직: 이전 크롤링 결과와 비교하여 새로운 핫딜 정보를 식별\n2. 알림 대상 사용자 식별: 해당 키워드를 구독한 사용자 중 알림을 받을 수 있는 상태인 사용자 필터링\n3. 알림 메시지 생성: 핫딜 정보를 기반으로 알림 메시지 생성\n4. 알림 발송 트리거: NotificationService를 호출하여 알림 발송\n\n크롤링 결과와 알림 시스템 간의 결합도를 낮추기 위해 이벤트 기반 아키텍처를 적용합니다. 크롤링 시스템은 새로운 핫딜 정보를 발견하면 이벤트를 발행하고, 알림 시스템은 이 이벤트를 구독하여 처리합니다.",
+        "testStrategy": "크롤링 결과 비교 로직에 대한 단위 테스트를 작성합니다. 다양한 시나리오(새로운 결과 있음, 결과 없음, 중복 결과 등)에서 시스템이 올바르게 동작하는지 검증합니다. 알림 대상 사용자 식별 로직이 정확한지 확인합니다. 이벤트 기반 아키텍처가 올바르게 작동하는지 통합 테스트를 통해 검증합니다.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "시스템 모니터링 및 오류 처리 구현",
+        "description": "시스템의 안정성과 신뢰성을 보장하기 위한 모니터링 및 오류 처리 메커니즘을 구현합니다.",
+        "details": "다음 기능을 구현합니다:\n1. 로깅 시스템: 크롤링 및 알림 발송 과정의 주요 이벤트와 오류를 기록\n2. 모니터링 대시보드: 시스템 상태와 성능 지표를 실시간으로 모니터링\n3. 알림 메커니즘: 중요한 오류 발생 시 관리자에게 알림\n4. 재시도 메커니즘: 일시적인 오류 발생 시 작업을 자동으로 재시도\n5. 회복 전략: 심각한 오류 발생 시 시스템을 안정적인 상태로 복구\n\n크롤링 과정에서 발생할 수 있는 다양한 오류(네트워크 오류, 사이트 구조 변경 등)를 처리하는 로직을 구현합니다. 알림 발송 실패 시 대체 채널을 통해 알림을 시도하는 폴백 메커니즘을 구현합니다.",
+        "testStrategy": "다양한 오류 시나리오를 시뮬레이션하여 시스템의 오류 처리 능력을 테스트합니다. 로깅 시스템이 중요한 이벤트와 오류를 올바르게 기록하는지 확인합니다. 재시도 메커니즘이 정해진 정책에 따라 작동하는지 검증합니다. 시스템 부하 테스트를 통해 높은 부하 상황에서도 안정적으로 동작하는지 확인합니다.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3,
+          4,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-20T13:38:52.424Z",
+      "updated": "2025-07-20T13:38:52.424Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
