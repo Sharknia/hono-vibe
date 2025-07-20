@@ -10,6 +10,8 @@ export type UserProps = {
   refreshToken: string | null;
   createdAt: Date;
   updatedAt: Date;
+  notificationPreferences?: { email?: boolean; push?: boolean };
+  pushToken?: string | null;
 };
 
 export class User {
@@ -29,6 +31,8 @@ export class User {
       refreshToken: null,
       createdAt: now,
       updatedAt: now,
+      notificationPreferences: { email: true, push: true }, // Default preferences
+      pushToken: null,
     });
   }
 
@@ -41,7 +45,7 @@ export class User {
   }
 
   public toProfile() {
-    const { passwordHash, refreshToken, createdAt, updatedAt, ...profile } = this.props;
+    const { passwordHash, refreshToken, createdAt, updatedAt, notificationPreferences, pushToken, ...profile } = this.props;
     return profile;
   }
 }
