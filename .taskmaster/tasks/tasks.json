@@ -189,7 +189,7 @@
               "4.2"
             ],
             "details": "NotifierFactory 클래스는 다음과 같이 구현합니다:\n\n```typescript\nclass NotifierFactory {\n  private static notifiers: Map<string, NotificationStrategy> = new Map();\n  \n  // 알림 전략 등록 메서드\n  static registerNotifier(notifier: NotificationStrategy): void {\n    const type = notifier.getType();\n    NotifierFactory.notifiers.set(type, notifier);\n  }\n  \n  // 알림 유형에 따라 적절한 Notifier 반환\n  static getNotifier(type: string): NotificationStrategy {\n    const notifier = NotifierFactory.notifiers.get(type);\n    if (!notifier) {\n      throw new Error(`지원하지 않는 알림 유형: ${type}`);\n    }\n    return notifier;\n  }\n  \n  // 사용자 설정에 따라 적절한 Notifier 배열 반환\n  static getNotifiersForUser(user: User): NotificationStrategy[] {\n    if (!user.notificationPreferences || user.notificationPreferences.length === 0) {\n      // 기본값으로 이메일 알림 사용\n      return [NotifierFactory.getNotifier('email')];\n    }\n    \n    return user.notificationPreferences\n      .map(prefType => {\n        try {\n          return NotifierFactory.getNotifier(prefType);\n        } catch (error) {\n          console.error(`사용자 ${user.id}의 알림 설정 중 오류: ${error.message}`);\n          return null;\n        }\n      })\n      .filter(Boolean) as NotificationStrategy[];\n  }\n  \n  // 모든 등록된 알림 유형 반환\n  static getRegisteredTypes(): string[] {\n    return Array.from(NotifierFactory.notifiers.keys());\n  }\n}\n\n// 애플리케이션 시작 시 알림 전략 등록\nfunction initializeNotifiers(emailService: EmailService, pushService: PushService, smsService: SMSService): void {\n  NotifierFactory.registerNotifier(new EmailNotifier(emailService));\n  NotifierFactory.registerNotifier(new PushNotifier(pushService));\n  NotifierFactory.registerNotifier(new SMSNotifier(smsService));\n}\n```\n\n이 팩토리 클래스는 다음과 같은 기능을 제공합니다:\n1. 다양한 알림 전략을 등록하고 관리\n2. 알림 유형에 따라 적절한 Notifier 인스턴스 반환\n3. 사용자 설정에 따라 적절한 Notifier 배열 반환\n4. 시스템에 등록된 모든 알림 유형 조회",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "NotifierFactory 클래스에 대한 단위 테스트를 작성합니다. 다양한 알림 전략을 등록하고 올바르게 반환하는지 검증합니다. 존재하지 않는 알림 유형을 요청할 때 적절한 오류를 발생시키는지 확인합니다. 사용자 설정에 따라 올바른 Notifier 배열을 반환하는지 테스트합니다. 모킹을 사용하여 다양한 알림 전략을 시뮬레이션합니다."
           },
           {
@@ -307,7 +307,7 @@
     ],
     "metadata": {
       "created": "2025-07-20T13:38:52.424Z",
-      "updated": "2025-07-20T14:31:37.704Z",
+      "updated": "2025-07-20T14:36:41.893Z",
       "description": "Tasks for master context"
     }
   }
