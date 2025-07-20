@@ -113,6 +113,17 @@
     -   **로컬 DB에 적용:** `npx wrangler d1 migrations apply hono_db --local`
     -   **프로덕션 DB에 적용:** `npx wrangler d1 migrations apply hono_db_prod --remote`
 
+### 2.4. How-To: 작업 계획 제시하기
+
+새로운 작업을 시작하기 전, 아래와 같이 상세한 실행 계획을 먼저 제시하고 사용자의 승인을 받아야 합니다. 이는 사용자가 작업의 범위와 내용을 명확히 이해하고, 의도치 않은 변경을 방지하기 위함입니다.
+
+1.  **핵심 목표 (Core Goal):** 해당 Task/Sub-task가 달성하고자 하는 핵심 목표를 한두 문장으로 요약합니다.
+2.  **세부 계획 (Detailed Plan):** TDD 원칙에 따라, 구체적인 실행 단계를 순서대로 나열합니다.
+3.  **파일 경로 명시 (Specify File Paths):** 생성되거나 수정될 파일의 전체 경로를 명시합니다. (예: `src/application/services/...`, `test/application/services/...`)
+4.  **의존성 및 테스트 전략 (Dependencies & Test Strategy):** 테스트할 코드의 주요 의존성을 밝히고, 테스트에서 이를 어떻게 다룰지(예: `vi.spyOn`을 사용한 Mocking) 설명합니다.
+5.  **주요 시나리오 (Key Scenarios):** 구현할 기능의 핵심적인 성공/실패 시나리오를 명시하여 테스트 커버리지를 예측할 수 있게 합니다.
+6.  **작업 범위 명확화 (Clarify Scope):** 현재 작업에서 **다루지 않을 내용**을 명확히 하여, 작업의 경계를 설정합니다. (예: '데이터베이스 연동은 다음 Sub-task에서 진행합니다.')
+
 ---
 
 # Task Master AI - Agent Integration Guide
