@@ -69,7 +69,7 @@ describe('Auth Routes', () => {
   describe('POST /api/auth/login', () => {
     beforeEach(async () => {
       const passwordHash = await hash('password123', 10);
-      await db.insert(schema.users).values({ id: 'user-123', email: 'test@example.com', passwordHash });
+      await db.insert(schema.users).values({ id: 'user-123', email: 'test@example.com', passwordHash, nickname: 'loginuser' });
     });
 
     it('should login successfully and return tokens', async () => {
@@ -107,6 +107,7 @@ describe('Auth Routes', () => {
           email: 'refresh@example.com', 
           passwordHash,
           refreshToken,
+          nickname: 'refreshuser'
       });
     });
 
@@ -139,6 +140,7 @@ describe('Auth Routes', () => {
             email: 'logout@example.com', 
             passwordHash,
             refreshToken: 'some-token',
+            nickname: 'logoutuser'
         });
     });
 

@@ -1,0 +1,314 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "데이터베이스 스키마 설계 및 구현",
+        "description": "PRD에 정의된 데이터베이스 스키마를 구현하고 필요한 테이블과 관계를 설정합니다.",
+        "details": "다음 테이블을 생성합니다:\n1. Users: 사용자 정보 저장 (id, email, password, nickname, role, notification_preferences, snooze_until, push_token, createdAt, updatedAt)\n2. Keywords: 전체 키워드 목록 (id, name, createdAt)\n3. UserKeywords: 사용자와 키워드의 구독 관계 (userId, keywordId)\n4. CrawlingSites: 크롤링 대상 사이트 정보 (id, name, baseUrl, strategy)\n5. CrawledResults: 크롤링 결과 데이터 (id, keywordId, siteId, title, url, price, crawledAt)\n6. Notifications: 사용자에게 발송된 알림 기록 (id, userId, title, content, url, type, is_read, createdAt)\n\n각 테이블 간의 관계를 설정하고, 인덱스를 적절히 생성하여 쿼리 성능을 최적화합니다. 데이터베이스 마이그레이션 스크립트를 작성하여 스키마 변경을 관리합니다.",
+        "testStrategy": "각 테이블 생성 및 관계 설정이 올바르게 되었는지 확인하는 단위 테스트를 작성합니다. 샘플 데이터를 삽입하고 조회하여 스키마가 예상대로 작동하는지 검증합니다. 외래 키 제약 조건이 제대로 작동하는지 테스트합니다.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "데이터베이스 테이블 및 스키마 정의",
+            "description": "PRD에 정의된 6개 테이블의 스키마를 상세히 정의하고 각 필드의 데이터 타입, 제약조건을 설정합니다.",
+            "dependencies": [],
+            "details": "각 테이블(Users, Keywords, UserKeywords, CrawlingSites, CrawledResults, Notifications)의 필드별 데이터 타입, 길이 제한, NULL 허용 여부, 기본값 등을 정의합니다. 각 테이블의 기본키(Primary Key)와 고유 제약조건(Unique Constraint)을 설정합니다. 특히 Users 테이블의 email 필드와 Keywords 테이블의 name 필드에 고유 제약조건을 적용합니다.",
+            "status": "done",
+            "testStrategy": "각 테이블 스키마 정의가 요구사항을 충족하는지 검토합니다. 데이터 타입이 적절한지, 제약조건이 올바르게 설정되었는지 확인합니다."
+          },
+          {
+            "id": 2,
+            "title": "테이블 간 관계 설정 및 외래키 구현",
+            "description": "테이블 간의 관계를 정의하고 필요한 외래키 제약조건을 구현합니다.",
+            "dependencies": [],
+            "details": "UserKeywords 테이블에 Users와 Keywords 테이블을 참조하는 외래키를 설정합니다. CrawledResults 테이블에 Keywords와 CrawlingSites 테이블을 참조하는 외래키를 설정합니다. Notifications 테이블에 Users 테이블을 참조하는 외래키를 설정합니다. 각 외래키에 대한 ON DELETE, ON UPDATE 동작을 적절히 설정합니다(CASCADE, SET NULL, RESTRICT 등).",
+            "status": "done",
+            "testStrategy": "외래키 제약조건이 올바르게 작동하는지 테스트합니다. 부모 레코드 삭제 시 자식 레코드가 정의된 동작대로 처리되는지 확인합니다."
+          },
+          {
+            "id": 3,
+            "title": "인덱스 설계 및 생성",
+            "description": "쿼리 성능 최적화를 위한 인덱스를 설계하고 생성합니다.",
+            "dependencies": [],
+            "details": "자주 조회되는 필드에 대한 인덱스를 생성합니다. Users 테이블의 email, nickname 필드에 인덱스를 생성합니다. Keywords 테이블의 name 필드에 인덱스를 생성합니다. CrawledResults 테이블의 keywordId, siteId, crawledAt 필드에 복합 인덱스를 생성합니다. Notifications 테이블의 userId, is_read, createdAt 필드에 인덱스를 생성합니다. 각 인덱스의 타입(B-tree, Hash 등)을 적절히 선택합니다.",
+            "status": "done",
+            "testStrategy": "인덱스 생성 전후의 쿼리 실행 계획과 성능을 비교하여 최적화 효과를 검증합니다. 특히 자주 사용되는 쿼리에 대한 성능 개선을 확인합니다."
+          },
+          {
+            "id": 4,
+            "title": "데이터베이스 마이그레이션 스크립트 작성",
+            "description": "스키마 변경을 관리하기 위한 마이그레이션 스크립트를 작성합니다.",
+            "dependencies": [],
+            "details": "각 테이블 생성을 위한 마이그레이션 스크립트를 작성합니다. 외래키 관계 설정을 위한 마이그레이션 스크립트를 작성합니다. 인덱스 생성을 위한 마이그레이션 스크립트를 작성합니다. 롤백 기능을 위한 down 마이그레이션 스크립트를 작성합니다. 마이그레이션 버전 관리 시스템을 구현하여 스키마 변경 이력을 추적합니다.",
+            "status": "done",
+            "testStrategy": "마이그레이션 스크립트가 오류 없이 실행되는지 테스트합니다. up과 down 마이그레이션이 정상적으로 작동하는지 확인합니다. 여러 환경(개발, 테스트, 프로덕션)에서 마이그레이션이 일관되게 적용되는지 검증합니다."
+          },
+          {
+            "id": 5,
+            "title": "데이터베이스 CRUD 작업 및 단위 테스트 구현",
+            "description": "각 테이블에 대한 기본적인 CRUD 작업을 구현하고 단위 테스트를 작성합니다.",
+            "dependencies": [],
+            "details": "각 테이블에 대한 Create, Read, Update, Delete 함수를 구현합니다. 복잡한 쿼리(예: 사용자별 구독 키워드 조회, 키워드별 최신 크롤링 결과 조회 등)를 위한 함수를 구현합니다. 데이터 무결성을 보장하기 위한 트랜잭션 처리 로직을 구현합니다. ORM 또는 쿼리 빌더를 사용하여 SQL 인젝션을 방지하고 코드 가독성을 높입니다.",
+            "status": "done",
+            "testStrategy": "각 CRUD 함수에 대한 단위 테스트를 작성합니다. 샘플 데이터를 삽입하고 조회하여 함수가 예상대로 작동하는지 검증합니다. 트랜잭션 처리가 올바르게 작동하는지 테스트합니다. 경계 조건과 오류 상황에서의 동작을 테스트합니다."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "크롤링 시스템 아키텍처 구현",
+        "description": "전략 패턴을 적용한 확장 가능한 크롤링 시스템 아키텍처를 설계하고 구현합니다.",
+        "status": "pending",
+        "dependencies": [
+          5,
+          8
+        ],
+        "priority": "high",
+        "details": "크롤링 시스템은 다음과 같은 구조로 구현합니다:\n1. CrawlerStrategy 인터페이스 정의: 모든 크롤러가 구현해야 하는 메서드 정의 (예: crawl(keyword))\n2. 사이트별 구체적인 크롤러 클래스 구현 (예: QuasarzoneCrawler, DanawaCrawler 등)\n3. CrawlerFactory 클래스 구현: 사이트 ID나 전략 식별자를 기반으로 적절한 크롤러 인스턴스를 생성\n4. CrawlingService 클래스 구현: 크롤링 작업을 조정하고 결과를 처리\n\n병렬 처리를 위해 Promise.all()을 사용하여 여러 사이트와 키워드에 대한 크롤링을 동시에 수행합니다. 크롤링 결과는 CrawledResults 테이블에 저장합니다.\n\n크롤링 시스템은 관리자 사용자 및 키워드 관리 API와 연동되어 작동하며, 이벤트 기반 아키텍처를 통해 다른 시스템과의 결합도를 낮춥니다. 오류 발생 시 적절한 로깅과 재시도 메커니즘을 구현하여 시스템의 안정성을 보장합니다.",
+        "testStrategy": "각 크롤러 구현체에 대한 단위 테스트를 작성합니다. 모킹을 사용하여 실제 웹사이트에 접근하지 않고도 크롤러의 동작을 테스트합니다. 통합 테스트를 통해 여러 크롤러가 함께 작동하는 시나리오를 검증합니다. 병렬 처리 성능을 측정하는 벤치마크 테스트를 구현합니다.\n\n또한 관리자 사용자 및 키워드 관리 API와의 연동 테스트를 수행하여 크롤링 시스템이 올바르게 키워드를 처리하는지 확인합니다. 다양한 오류 시나리오(네트워크 오류, 사이트 구조 변경 등)에서 시스템의 오류 처리 능력을 테스트합니다.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "CrawlerStrategy 인터페이스 정의",
+            "description": "모든 크롤러가 구현해야 하는 공통 인터페이스를 정의합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "사이트별 크롤러 구현",
+            "description": "주요 핫딜 사이트에 대한 구체적인 크롤러 클래스를 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "CrawlerFactory 클래스 구현",
+            "description": "사이트 ID나 전략 식별자를 기반으로 적절한 크롤러 인스턴스를 생성하는 팩토리 클래스를 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "CrawlingService 클래스 구현",
+            "description": "크롤링 작업을 조정하고 결과를 처리하는 서비스 클래스를 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "병렬 처리 구현",
+            "description": "Promise.all()을 사용하여 여러 사이트와 키워드에 대한 크롤링을 동시에 수행하는 기능을 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "오류 처리 및 재시도 메커니즘 구현",
+            "description": "크롤링 과정에서 발생할 수 있는 다양한 오류를 처리하고 필요시 재시도하는 메커니즘을 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          },
+          {
+            "id": 7,
+            "title": "관리자 키워드 관리 API 연동",
+            "description": "관리자 키워드 관리 API와 연동하여 크롤링할 키워드를 동적으로 관리할 수 있도록 구현합니다.",
+            "status": "pending",
+            "dependencies": [],
+            "details": "",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Cloudflare Workers Cron 설정 및 크롤링 트리거 구현",
+        "description": "Cloudflare Workers의 Cron 기능을 사용하여 30분마다 크롤링을 트리거하는 시스템을 구현합니다.",
+        "details": "다음 단계로 구현합니다:\n1. Cloudflare Workers 프로젝트 설정\n2. wrangler.toml 파일에 cron 트리거 설정 (예: `crons = [\"*/30 * * * *\"]`)\n3. 크롤링 API 엔드포인트 구현 (/api/crawl)\n4. Worker 스크립트 작성: 30분마다 모든 키워드에 대한 크롤링을 트리거\n5. 크롤링 작업 상태 모니터링 및 로깅 기능 추가\n\n크롤링 API는 다음 기능을 포함합니다:\n- 모든 활성 키워드 조회\n- 각 키워드에 대해 등록된 모든 사이트를 크롤링\n- 새로운 결과 감지 시 알림 시스템에 이벤트 발행",
+        "testStrategy": "로컬 환경에서 wrangler를 사용하여 Cron 트리거를 시뮬레이션하고 크롤링 API가 올바르게 호출되는지 테스트합니다. 다양한 시나리오(키워드 없음, 많은 키워드 등)에서 크롤링 시스템이 올바르게 작동하는지 검증합니다. 로깅 및 모니터링 기능이 제대로 작동하는지 확인합니다.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "알림 시스템 아키텍처 구현",
+        "description": "전략 패턴을 적용한 확장 가능한 알림 시스템을 설계하고 구현합니다.",
+        "details": "알림 시스템은 다음과 같은 구조로 구현합니다:\n1. NotificationStrategy 인터페이스 정의: 모든 알림 채널이 구현해야 하는 메서드 정의 (예: send(user, message))\n2. 채널별 구체적인 알림 클래스 구현 (예: EmailNotifier, PushNotifier 등)\n3. NotifierFactory 클래스 구현: 알림 유형에 따라 적절한 Notifier 인스턴스를 생성\n4. NotificationService 클래스 구현: 사용자 설정에 따라 적절한 채널로 알림을 발송\n\n병렬 처리를 위해 Promise.all()을 사용하여 여러 사용자에게 알림을 동시에 발송합니다. 알림 발송 결과는 Notifications 테이블에 기록합니다.",
+        "testStrategy": "각 알림 구현체에 대한 단위 테스트를 작성합니다. 모킹을 사용하여 실제 이메일이나 푸시 알림을 보내지 않고도 알림 시스템의 동작을 테스트합니다. 통합 테스트를 통해 여러 알림 채널이 함께 작동하는 시나리오를 검증합니다. 사용자 설정에 따라 올바른 채널로 알림이 발송되는지 확인합니다.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "NotificationStrategy 인터페이스 정의",
+            "description": "알림 시스템의 기본 구조가 될 NotificationStrategy 인터페이스를 정의합니다. 이 인터페이스는 모든 알림 채널이 구현해야 하는 메서드를 포함합니다.",
+            "dependencies": [],
+            "details": "NotificationStrategy 인터페이스는 다음 메서드를 포함해야 합니다:\n1. send(user, message): 사용자에게 알림을 보내는 메서드\n2. validateMessage(message): 메시지 형식이 유효한지 검증하는 메서드\n3. getType(): 알림 유형을 반환하는 메서드\n\n인터페이스 구현 예시:\n```typescript\ninterface NotificationStrategy {\n  send(user: User, message: NotificationMessage): Promise<NotificationResult>;\n  validateMessage(message: NotificationMessage): boolean;\n  getType(): string;\n}\n\ninterface NotificationMessage {\n  title: string;\n  content: string;\n  url?: string;\n  additionalData?: Record<string, any>;\n}\n\ninterface NotificationResult {\n  success: boolean;\n  messageId?: string;\n  error?: Error;\n  timestamp: Date;\n}\n```",
+            "status": "done",
+            "testStrategy": "인터페이스 정의에 대한 타입 검사를 수행합니다. TypeScript의 타입 시스템을 활용하여 인터페이스가 올바르게 정의되었는지 확인합니다."
+          },
+          {
+            "id": 2,
+            "title": "채널별 알림 클래스 구현",
+            "description": "NotificationStrategy 인터페이스를 구현하는 다양한 알림 채널 클래스를 구현합니다. 이메일, 푸시 알림, SMS 등 다양한 채널을 지원해야 합니다.",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "다음과 같은 알림 채널 클래스를 구현합니다:\n\n1. EmailNotifier: 이메일을 통한 알림 발송\n```typescript\nclass EmailNotifier implements NotificationStrategy {\n  constructor(private emailService: EmailService) {}\n  \n  async send(user: User, message: NotificationMessage): Promise<NotificationResult> {\n    try {\n      if (!user.email) {\n        throw new Error('사용자 이메일이 없습니다');\n      }\n      \n      if (!this.validateMessage(message)) {\n        throw new Error('유효하지 않은 메시지 형식');\n      }\n      \n      const result = await this.emailService.sendEmail({\n        to: user.email,\n        subject: message.title,\n        html: message.content,\n      });\n      \n      return {\n        success: true,\n        messageId: result.messageId,\n        timestamp: new Date()\n      };\n    } catch (error) {\n      return {\n        success: false,\n        error,\n        timestamp: new Date()\n      };\n    }\n  }\n  \n  validateMessage(message: NotificationMessage): boolean {\n    return Boolean(message.title && message.content);\n  }\n  \n  getType(): string {\n    return 'email';\n  }\n}\n```\n\n2. PushNotifier: 모바일 푸시 알림 발송\n```typescript\nclass PushNotifier implements NotificationStrategy {\n  constructor(private pushService: PushService) {}\n  \n  async send(user: User, message: NotificationMessage): Promise<NotificationResult> {\n    try {\n      if (!user.pushToken) {\n        throw new Error('사용자 푸시 토큰이 없습니다');\n      }\n      \n      if (!this.validateMessage(message)) {\n        throw new Error('유효하지 않은 메시지 형식');\n      }\n      \n      const result = await this.pushService.sendPush({\n        token: user.pushToken,\n        title: message.title,\n        body: message.content,\n        data: {\n          url: message.url,\n          ...message.additionalData\n        }\n      });\n      \n      return {\n        success: true,\n        messageId: result.id,\n        timestamp: new Date()\n      };\n    } catch (error) {\n      return {\n        success: false,\n        error,\n        timestamp: new Date()\n      };\n    }\n  }\n  \n  validateMessage(message: NotificationMessage): boolean {\n    return Boolean(message.title && message.content);\n  }\n  \n  getType(): string {\n    return 'push';\n  }\n}\n```\n\n3. SMSNotifier: SMS를 통한 알림 발송\n```typescript\nclass SMSNotifier implements NotificationStrategy {\n  constructor(private smsService: SMSService) {}\n  \n  async send(user: User, message: NotificationMessage): Promise<NotificationResult> {\n    try {\n      if (!user.phoneNumber) {\n        throw new Error('사용자 전화번호가 없습니다');\n      }\n      \n      if (!this.validateMessage(message)) {\n        throw new Error('유효하지 않은 메시지 형식');\n      }\n      \n      // SMS는 길이 제한이 있으므로 내용을 축약\n      const smsContent = `${message.title}: ${message.content.substring(0, 100)}`;\n      \n      const result = await this.smsService.sendSMS({\n        to: user.phoneNumber,\n        message: smsContent\n      });\n      \n      return {\n        success: true,\n        messageId: result.messageId,\n        timestamp: new Date()\n      };\n    } catch (error) {\n      return {\n        success: false,\n        error,\n        timestamp: new Date()\n      };\n    }\n  }\n  \n  validateMessage(message: NotificationMessage): boolean {\n    return Boolean(message.title && message.content);\n  }\n  \n  getType(): string {\n    return 'sms';\n  }\n}\n```",
+            "status": "done",
+            "testStrategy": "각 알림 클래스에 대한 단위 테스트를 작성합니다. 모킹을 사용하여 실제 외부 서비스(이메일, 푸시, SMS)를 호출하지 않고 테스트합니다. 다양한 시나리오(성공, 실패, 유효하지 않은 메시지 등)에서 각 클래스가 올바르게 동작하는지 검증합니다. Jest의 mock 기능을 활용하여 외부 서비스를 모킹합니다."
+          },
+          {
+            "id": 3,
+            "title": "NotifierFactory 클래스 구현",
+            "description": "알림 유형에 따라 적절한 Notifier 인스턴스를 생성하는 팩토리 클래스를 구현합니다. 이 클래스는 시스템이 필요에 따라 다양한 알림 채널을 동적으로 선택할 수 있게 합니다.",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "NotifierFactory 클래스는 다음과 같이 구현합니다:\n\n```typescript\nclass NotifierFactory {\n  private static notifiers: Map<string, NotificationStrategy> = new Map();\n  \n  // 알림 전략 등록 메서드\n  static registerNotifier(notifier: NotificationStrategy): void {\n    const type = notifier.getType();\n    NotifierFactory.notifiers.set(type, notifier);\n  }\n  \n  // 알림 유형에 따라 적절한 Notifier 반환\n  static getNotifier(type: string): NotificationStrategy {\n    const notifier = NotifierFactory.notifiers.get(type);\n    if (!notifier) {\n      throw new Error(`지원하지 않는 알림 유형: ${type}`);\n    }\n    return notifier;\n  }\n  \n  // 사용자 설정에 따라 적절한 Notifier 배열 반환\n  static getNotifiersForUser(user: User): NotificationStrategy[] {\n    if (!user.notificationPreferences || user.notificationPreferences.length === 0) {\n      // 기본값으로 이메일 알림 사용\n      return [NotifierFactory.getNotifier('email')];\n    }\n    \n    return user.notificationPreferences\n      .map(prefType => {\n        try {\n          return NotifierFactory.getNotifier(prefType);\n        } catch (error) {\n          console.error(`사용자 ${user.id}의 알림 설정 중 오류: ${error.message}`);\n          return null;\n        }\n      })\n      .filter(Boolean) as NotificationStrategy[];\n  }\n  \n  // 모든 등록된 알림 유형 반환\n  static getRegisteredTypes(): string[] {\n    return Array.from(NotifierFactory.notifiers.keys());\n  }\n}\n\n// 애플리케이션 시작 시 알림 전략 등록\nfunction initializeNotifiers(emailService: EmailService, pushService: PushService, smsService: SMSService): void {\n  NotifierFactory.registerNotifier(new EmailNotifier(emailService));\n  NotifierFactory.registerNotifier(new PushNotifier(pushService));\n  NotifierFactory.registerNotifier(new SMSNotifier(smsService));\n}\n```\n\n이 팩토리 클래스는 다음과 같은 기능을 제공합니다:\n1. 다양한 알림 전략을 등록하고 관리\n2. 알림 유형에 따라 적절한 Notifier 인스턴스 반환\n3. 사용자 설정에 따라 적절한 Notifier 배열 반환\n4. 시스템에 등록된 모든 알림 유형 조회",
+            "status": "done",
+            "testStrategy": "NotifierFactory 클래스에 대한 단위 테스트를 작성합니다. 다양한 알림 전략을 등록하고 올바르게 반환하는지 검증합니다. 존재하지 않는 알림 유형을 요청할 때 적절한 오류를 발생시키는지 확인합니다. 사용자 설정에 따라 올바른 Notifier 배열을 반환하는지 테스트합니다. 모킹을 사용하여 다양한 알림 전략을 시뮬레이션합니다."
+          },
+          {
+            "id": 4,
+            "title": "NotificationService 클래스 구현",
+            "description": "사용자 설정에 따라 적절한 채널로 알림을 발송하는 서비스 클래스를 구현합니다. 이 클래스는 알림 발송 로직을 캡슐화하고, 병렬 처리를 통해 효율적으로 알림을 발송합니다.",
+            "dependencies": [
+              "4.3"
+            ],
+            "details": "NotificationService 클래스는 다음과 같이 구현합니다:\n\n```typescript\nclass NotificationService {\n  constructor(\n    private notifierFactory: typeof NotifierFactory,\n    private notificationRepository: NotificationRepository\n  ) {}\n  \n  // 단일 사용자에게 알림 발송\n  async sendNotification(user: User, message: NotificationMessage): Promise<NotificationResult[]> {\n    // 사용자가 알림 일시 중지 상태인지 확인\n    if (user.snoozeUntil && new Date() < user.snoozeUntil) {\n      console.log(`사용자 ${user.id}는 알림이 일시 중지되었습니다. (${user.snoozeUntil}까지)`);\n      return [];\n    }\n    \n    // 사용자 설정에 따른 알림 전략 가져오기\n    const notifiers = this.notifierFactory.getNotifiersForUser(user);\n    if (notifiers.length === 0) {\n      console.log(`사용자 ${user.id}에게 발송할 수 있는 알림 채널이 없습니다.`);\n      return [];\n    }\n    \n    // 모든 채널로 병렬 발송\n    const results = await Promise.all(\n      notifiers.map(notifier => notifier.send(user, message))\n    );\n    \n    // 알림 결과 저장\n    await Promise.all(\n      results.map((result, index) => {\n        const notificationType = notifiers[index].getType();\n        return this.notificationRepository.save({\n          userId: user.id,\n          title: message.title,\n          content: message.content,\n          url: message.url,\n          type: notificationType,\n          isRead: false,\n          success: result.success,\n          errorMessage: result.error?.message,\n          createdAt: result.timestamp\n        });\n      })\n    );\n    \n    return results;\n  }\n  \n  // 여러 사용자에게 동시에 알림 발송\n  async sendBulkNotifications(users: User[], message: NotificationMessage): Promise<Map<string, NotificationResult[]>> {\n    const results = new Map<string, NotificationResult[]>();\n    \n    // 모든 사용자에게 병렬로 알림 발송\n    await Promise.all(\n      users.map(async user => {\n        const userResults = await this.sendNotification(user, message);\n        results.set(user.id, userResults);\n      })\n    );\n    \n    return results;\n  }\n  \n  // 특정 키워드를 구독한 모든 사용자에게 알림 발송\n  async sendNotificationsByKeyword(keywordId: string, message: NotificationMessage): Promise<Map<string, NotificationResult[]>> {\n    // 키워드를 구독한 사용자 조회 (이 부분은 실제 구현에 맞게 수정 필요)\n    const userRepository = new UserRepository(); // 의존성 주입으로 변경 가능\n    const subscribers = await userRepository.findUsersByKeywordId(keywordId);\n    \n    return this.sendBulkNotifications(subscribers, message);\n  }\n}\n```\n\n이 서비스 클래스는 다음과 같은 기능을 제공합니다:\n1. 단일 사용자에게 알림 발송 (사용자 설정에 따라 적절한 채널 선택)\n2. 여러 사용자에게 동시에 알림 발송 (병렬 처리)\n3. 특정 키워드를 구독한 모든 사용자에게 알림 발송\n4. 알림 발송 결과를 데이터베이스에 기록\n5. 사용자의 알림 일시 중지 설정 존중",
+            "status": "done",
+            "testStrategy": "NotificationService 클래스에 대한 단위 테스트와 통합 테스트를 작성합니다. 모킹을 사용하여 NotifierFactory와 NotificationRepository를 시뮬레이션합니다. 다양한 시나리오(성공적인 알림 발송, 일부 채널 실패, 사용자 알림 일시 중지 등)에서 서비스가 올바르게 동작하는지 검증합니다. 병렬 처리가 효율적으로 이루어지는지 성능 테스트를 수행합니다."
+          },
+          {
+            "id": 5,
+            "title": "알림 시스템 통합 및 데이터베이스 연동",
+            "description": "구현된 알림 시스템 컴포넌트들을 통합하고, 알림 발송 결과를 데이터베이스에 기록하는 로직을 구현합니다. 또한 알림 시스템을 애플리케이션의 다른 부분과 연동합니다.",
+            "dependencies": [
+              "4.1",
+              "4.2",
+              "4.3",
+              "4.4"
+            ],
+            "details": "알림 시스템 통합 및 데이터베이스 연동은 다음과 같이 구현합니다:\n\n1. NotificationRepository 구현:\n```typescript\nclass NotificationRepository {\n  constructor(private db: Database) {}\n  \n  async save(notification: {\n    userId: string;\n    title: string;\n    content: string;\n    url?: string;\n    type: string;\n    isRead: boolean;\n    success: boolean;\n    errorMessage?: string;\n    createdAt: Date;\n  }): Promise<string> {\n    const result = await this.db.query(`\n      INSERT INTO Notifications (\n        user_id, title, content, url, type, is_read, success, error_message, created_at\n      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)\n    `, [\n      notification.userId,\n      notification.title,\n      notification.content,\n      notification.url || null,\n      notification.type,\n      notification.isRead ? 1 : 0,\n      notification.success ? 1 : 0,\n      notification.errorMessage || null,\n      notification.createdAt\n    ]);\n    \n    return result.insertId;\n  }\n  \n  async findByUserId(userId: string, options: {\n    limit?: number;\n    offset?: number;\n    onlyUnread?: boolean;\n  } = {}): Promise<Notification[]> {\n    const { limit = 20, offset = 0, onlyUnread = false } = options;\n    \n    let query = `\n      SELECT * FROM Notifications\n      WHERE user_id = ?\n    `;\n    \n    const params = [userId];\n    \n    if (onlyUnread) {\n      query += ' AND is_read = 0';\n    }\n    \n    query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';\n    params.push(limit, offset);\n    \n    return this.db.query(query, params);\n  }\n  \n  async markAsRead(notificationId: string): Promise<boolean> {\n    const result = await this.db.query(`\n      UPDATE Notifications\n      SET is_read = 1\n      WHERE id = ?\n    `, [notificationId]);\n    \n    return result.affectedRows > 0;\n  }\n  \n  async markAllAsRead(userId: string): Promise<number> {\n    const result = await this.db.query(`\n      UPDATE Notifications\n      SET is_read = 1\n      WHERE user_id = ? AND is_read = 0\n    `, [userId]);\n    \n    return result.affectedRows;\n  }\n}\n```\n\n2. 알림 시스템 초기화 및 통합:\n```typescript\nfunction initializeNotificationSystem(app: Application): NotificationService {\n  // 필요한 서비스 인스턴스 생성\n  const emailService = new EmailService(config.email);\n  const pushService = new PushService(config.push);\n  const smsService = new SMSService(config.sms);\n  const db = app.get('db');\n  \n  // 알림 전략 등록\n  NotifierFactory.registerNotifier(new EmailNotifier(emailService));\n  NotifierFactory.registerNotifier(new PushNotifier(pushService));\n  NotifierFactory.registerNotifier(new SMSNotifier(smsService));\n  \n  // 알림 저장소 및 서비스 생성\n  const notificationRepository = new NotificationRepository(db);\n  const notificationService = new NotificationService(NotifierFactory, notificationRepository);\n  \n  // 애플리케이션에 서비스 등록\n  app.set('notificationService', notificationService);\n  \n  return notificationService;\n}\n```\n\n3. 알림 관련 API 엔드포인트 구현:\n```typescript\nfunction setupNotificationRoutes(app: Application): void {\n  const notificationService = app.get('notificationService');\n  const notificationRepository = app.get('notificationRepository');\n  \n  // 사용자의 알림 목록 조회\n  app.get('/api/notifications', authenticate, async (req, res) => {\n    try {\n      const userId = req.user.id;\n      const { limit, offset, onlyUnread } = req.query;\n      \n      const notifications = await notificationRepository.findByUserId(userId, {\n        limit: Number(limit) || 20,\n        offset: Number(offset) || 0,\n        onlyUnread: onlyUnread === 'true'\n      });\n      \n      res.json(notifications);\n    } catch (error) {\n      res.status(500).json({ error: error.message });\n    }\n  });\n  \n  // 알림을 읽음으로 표시\n  app.put('/api/notifications/:id/read', authenticate, async (req, res) => {\n    try {\n      const notificationId = req.params.id;\n      const success = await notificationRepository.markAsRead(notificationId);\n      \n      if (success) {\n        res.json({ success: true });\n      } else {\n        res.status(404).json({ error: '알림을 찾을 수 없습니다' });\n      }\n    } catch (error) {\n      res.status(500).json({ error: error.message });\n    }\n  });\n  \n  // 모든 알림을 읽음으로 표시\n  app.put('/api/notifications/read-all', authenticate, async (req, res) => {\n    try {\n      const userId = req.user.id;\n      const count = await notificationRepository.markAllAsRead(userId);\n      \n      res.json({ success: true, count });\n    } catch (error) {\n      res.status(500).json({ error: error.message });\n    }\n  });\n  \n  // 알림 설정 업데이트\n  app.put('/api/users/notification-preferences', authenticate, async (req, res) => {\n    try {\n      const userId = req.user.id;\n      const { preferences } = req.body;\n      \n      // 유효한 알림 유형인지 검증\n      const validTypes = NotifierFactory.getRegisteredTypes();\n      const invalidTypes = preferences.filter(type => !validTypes.includes(type));\n      \n      if (invalidTypes.length > 0) {\n        return res.status(400).json({ error: `유효하지 않은 알림 유형: ${invalidTypes.join(', ')}` });\n      }\n      \n      // 사용자 알림 설정 업데이트 (UserRepository 필요)\n      const userRepository = app.get('userRepository');\n      await userRepository.updateNotificationPreferences(userId, preferences);\n      \n      res.json({ success: true });\n    } catch (error) {\n      res.status(500).json({ error: error.message });\n    }\n  });\n}\n```",
+            "status": "pending",
+            "testStrategy": "통합 테스트를 통해 알림 시스템의 모든 컴포넌트가 함께 올바르게 작동하는지 검증합니다. 데이터베이스 연동이 제대로 이루어지는지 확인하기 위해 실제 데이터베이스 또는 인메모리 데이터베이스를 사용하여 테스트합니다. API 엔드포인트에 대한 E2E 테스트를 작성하여 클라이언트 관점에서 알림 시스템이 올바르게 동작하는지 확인합니다. 다양한 사용자 시나리오(알림 설정 변경, 알림 읽음 표시 등)를 테스트합니다."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "사용자 키워드 관리 API 구현",
+        "description": "사용자가 키워드를 조회, 구독, 삭제할 수 있는 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/keywords: 구독 가능한 전체 키워드 목록 조회\n2. GET /api/me/keywords: 내가 구독한 키워드 목록 조회\n3. POST /api/me/keywords: 키워드 구독 (Request Body: { \"keywordId\": 1 })\n4. DELETE /api/me/keywords/:keywordId: 구독한 키워드 삭제\n5. GET /api/keywords/:keywordId/results: 특정 키워드의 최신 핫딜 결과 조회\n\n각 API는 사용자 인증을 확인하고, 적절한 권한이 있는지 검증합니다. 데이터베이스 쿼리를 최적화하여 빠른 응답 시간을 보장합니다. 페이지네이션을 적용하여 대량의 데이터를 효율적으로 처리합니다.",
+        "testStrategy": "각 API 엔드포인트에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 시나리오(정상 케이스, 에러 케이스, 경계 조건 등)에서 API가 올바르게 동작하는지 검증합니다. 인증 및 권한 검사가 제대로 작동하는지 확인합니다. 성능 테스트를 통해 API의 응답 시간과 처리량을 측정합니다.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "사용자 알림 설정 및 관리 API 구현",
+        "description": "사용자가 알림 설정을 조회하고 변경할 수 있는 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/me/notifications/settings: 내 알림 설정 조회\n2. PUT /api/me/notifications/settings: 내 알림 설정 수정 (Request Body: {\"email\": true, \"push\": false, \"snoozeUntil\": \"2025-08-01T00:00:00Z\"})\n3. GET /api/me/notifications: 내 알림 기록 목록 조회 (알림 보관함)\n4. POST /api/me/notifications/:notificationId/read: 특정 알림을 읽음 상태로 변경\n\n알림 일시 중지(Snooze) 기능을 구현하여 사용자가 지정한 기간 동안 알림을 받지 않도록 설정할 수 있습니다. 알림 보관함에서는 페이지네이션과 필터링 기능을 제공하여 사용자가 쉽게 알림을 관리할 수 있도록 합니다.",
+        "testStrategy": "각 API 엔드포인트에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 알림 설정 시나리오에서 시스템이 올바르게 동작하는지 검증합니다. 알림 일시 중지 기능이 정확히 작동하는지 확인합니다. 알림 보관함의 페이지네이션과 필터링 기능이 올바르게 동작하는지 테스트합니다.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "관리자 대시보드 API 구현",
+        "description": "관리자가 시스템 핵심 지표를 모니터링할 수 있는 대시보드 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/admin/dashboard: 대시보드 데이터 조회\n\n대시보드 API는 다음과 같은 정보를 제공합니다:\n- 크롤링 성공/실패 현황 통계\n- 알림 발송량 통계 (채널별, 시간대별)\n- 인기 키워드 순위\n- 활성 사용자 수\n- 시스템 성능 지표\n\n데이터는 캐싱을 적용하여 빠른 응답 시간을 보장합니다. 관리자 권한을 가진 사용자만 접근할 수 있도록 인증 및 권한 검사를 구현합니다.",
+        "testStrategy": "대시보드 API에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 데이터 시나리오에서 통계 계산이 정확한지 검증합니다. 캐싱 메커니즘이 올바르게 작동하는지 확인합니다. 관리자 권한 검사가 제대로 동작하는지 테스트합니다.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "관리자 사용자 및 키워드 관리 API 구현",
+        "description": "관리자가 사용자와 키워드를 관리할 수 있는 API를 구현합니다.",
+        "details": "다음 API 엔드포인트를 구현합니다:\n1. GET /api/admin/users: 전체 유저 목록 조회\n2. GET /api/admin/users/:userId: 특정 유저 정보 조회\n3. GET /api/admin/keywords: 전체 키워드 리스트 조회\n4. POST /api/admin/keywords: 새 키워드 추가 (Request Body: { \"name\": \"새키워드\" })\n5. PUT /api/admin/keywords/:keywordId: 키워드 수정\n6. DELETE /api/admin/keywords/:keywordId: 키워드 삭제\n\n각 API는 관리자 권한을 가진 사용자만 접근할 수 있도록 인증 및 권한 검사를 구현합니다. 페이지네이션과 필터링 기능을 제공하여 대량의 데이터를 효율적으로 관리할 수 있도록 합니다.",
+        "testStrategy": "각 API 엔드포인트에 대한 단위 테스트와 통합 테스트를 작성합니다. 다양한 시나리오에서 API가 올바르게 동작하는지 검증합니다. 관리자 권한 검사가 제대로 작동하는지 확인합니다. 키워드 관리 작업이 데이터베이스에 올바르게 반영되는지 테스트합니다.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "크롤링 결과와 알림 시스템 연동",
+        "description": "크롤링 시스템에서 새로운 핫딜 정보가 감지되면 알림 시스템을 트리거하는 연동 로직을 구현합니다.",
+        "details": "다음 기능을 구현합니다:\n1. 크롤링 결과 비교 로직: 이전 크롤링 결과와 비교하여 새로운 핫딜 정보를 식별\n2. 알림 대상 사용자 식별: 해당 키워드를 구독한 사용자 중 알림을 받을 수 있는 상태인 사용자 필터링\n3. 알림 메시지 생성: 핫딜 정보를 기반으로 알림 메시지 생성\n4. 알림 발송 트리거: NotificationService를 호출하여 알림 발송\n\n크롤링 결과와 알림 시스템 간의 결합도를 낮추기 위해 이벤트 기반 아키텍처를 적용합니다. 크롤링 시스템은 새로운 핫딜 정보를 발견하면 이벤트를 발행하고, 알림 시스템은 이 이벤트를 구독하여 처리합니다.",
+        "testStrategy": "크롤링 결과 비교 로직에 대한 단위 테스트를 작성합니다. 다양한 시나리오(새로운 결과 있음, 결과 없음, 중복 결과 등)에서 시스템이 올바르게 동작하는지 검증합니다. 알림 대상 사용자 식별 로직이 정확한지 확인합니다. 이벤트 기반 아키텍처가 올바르게 작동하는지 통합 테스트를 통해 검증합니다.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "시스템 모니터링 및 오류 처리 구현",
+        "description": "시스템의 안정성과 신뢰성을 보장하기 위한 모니터링 및 오류 처리 메커니즘을 구현합니다.",
+        "details": "다음 기능을 구현합니다:\n1. 로깅 시스템: 크롤링 및 알림 발송 과정의 주요 이벤트와 오류를 기록\n2. 모니터링 대시보드: 시스템 상태와 성능 지표를 실시간으로 모니터링\n3. 알림 메커니즘: 중요한 오류 발생 시 관리자에게 알림\n4. 재시도 메커니즘: 일시적인 오류 발생 시 작업을 자동으로 재시도\n5. 회복 전략: 심각한 오류 발생 시 시스템을 안정적인 상태로 복구\n\n크롤링 과정에서 발생할 수 있는 다양한 오류(네트워크 오류, 사이트 구조 변경 등)를 처리하는 로직을 구현합니다. 알림 발송 실패 시 대체 채널을 통해 알림을 시도하는 폴백 메커니즘을 구현합니다.",
+        "testStrategy": "다양한 오류 시나리오를 시뮬레이션하여 시스템의 오류 처리 능력을 테스트합니다. 로깅 시스템이 중요한 이벤트와 오류를 올바르게 기록하는지 확인합니다. 재시도 메커니즘이 정해진 정책에 따라 작동하는지 검증합니다. 시스템 부하 테스트를 통해 높은 부하 상황에서도 안정적으로 동작하는지 확인합니다.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3,
+          4,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-20T13:38:52.424Z",
+      "updated": "2025-07-20T14:45:17.795Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
